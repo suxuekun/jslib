@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="css/jquery-ui.css" />
+<link rel="stylesheet" href="css/floorChart.css" />
+
+<!-- panzoom from here-->
+			<!-- wrapper need an id -->
+			<div class="col-xs-6" id = "set2">
+				<div class = "panzoom_map_wrapper panzoom_mouse">
+					<div class = "parent">
+						<div class = "panzoom">
+							<!--  every thing will drag together under chart here -->
+							<img id ="map_bg_img" class="panzoom_map_component" src = "map/60011.png">
+						</div>
+					</div>
+					<!-- chart here need an id -->
+					<div id="echart_floor_1" class = "echart_floor panzoom_map_wrapper pan_map_component" ></div>			
+					<!-- map controller, can delete if don't want -->
+					<div class = "panzoom_map_controller">
+							<div>
+								<button class="reset">reset</button>
+							</div>
+							<div>
+								<button class="zoom-in">+</button>
+							</div>
+							<div>
+								<div class="slider-range"></div>
+								<input type="hidden" class="zoom-range">
+							</div>
+							<div>
+								<button class="zoom-out">-</button>
+							</div>
+					</div>
+				</div>
+			</div>
+<!-- panzoom end here-->
+<script src="js/jquery.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/jquery.panzoom.js"></script>
+<script src="js/echarts-all-dev.js"></script>
+<script src="js/floorChartPlugin.js"></script>
+<script>
+
+/**
+ * demo script here
+ */
+
+/**
+ * need 2 id here
+ * one is the wrapper div name 
+ * second is the chart div name
+ */
+var floorChart = floorChartPlugin.init('set2',{chartName:"echart_floor_1"});
+
+
+option = {
+
+		chartLegend:'heatmap',
+		series:[],
+
+ 		points:[],
+
+		zoom_max_scale:4,
+		zoom_min_scale:0.1,
+		zoom_increment:0.1
+}
+// doc file:///Users/tssdev2/work/echarts/doc/doc.html#实例方法 
+// see search echarts.config.EVENT
+
+// here is example of how to register click and hover event
+// you can register other events according to the doc above
+floorChart.register_ready_func({callback:click_handler,args:[floorChart]})
+floorChart.register_ready_func({callback:hover_handler,args:[floorChart]})
+
+// here is how to handle events
+function hover_handler(chart){
+	chart.echart.on(echarts.config.EVENT.HOVER,function(param){
+    	var name = param.name;
+    	if (name.indexOf(">")>0){
+    		var from_to = name.split(">");
+    		var from = $.trim(from_to[0]);
+    		var to = $.trim(from_to[1]);
+    		console.log("you hover a line:",from,to)
+    	}else{
+    		console.log("you hover a point:",param.data.name);
+    	}
+		
+		//alert("you hover:"+param.data.name)
+	});
+}
+
+function click_handler(chart){
+	chart.echart.on(echarts.config.EVENT.CLICK,function(param){
+		var name = param.name;
+    	if (name.indexOf(">")>0){
+    		var from_to = name.split(">");
+    		var from = $.trim(from_to[0]);
+    		var to = $.trim(from_to[1]);
+    		alert("you clicked a line:"+from+"->"+to)
+    	}else{
+    		info = "you clicked a point:"+param.data.name;
+    		if (param.data.ext){
+    			for (key in param.data.ext){
+    				info+="\n"+key+ " : " + param.data.ext[key];
+    			}
+    		}
+			alert(info);
+    	}
+	});
+}
+// when finish then set the option to the chart then the chart will show what you want
+floorChart.setOption(option);
+
+
+/* floorChart2.setOption(option); */
+</script>

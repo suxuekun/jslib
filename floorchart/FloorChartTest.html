@@ -1,0 +1,289 @@
+<link rel="stylesheet" href="css/jquery-ui.css" />
+<link rel="stylesheet" href="css/floorChart.css" />
+
+<!-- panzoom from here-->
+			<!-- wrapper need an id -->
+			<div class="col-xs-6" id = "set2">
+				<div class = "panzoom_map_wrapper panzoom_mouse">
+					<div class = "parent">
+						<div class = "panzoom">
+							<!--  every thing will drag together under chart here -->
+							<img id ="map_bg_img" class="panzoom_map_component" src = "map/60011.png">
+						</div>
+					</div>
+					<!-- chart here need an id -->
+					<div id="echart_floor_1" class = "echart_floor panzoom_map_wrapper pan_map_component" ></div>			
+					<!-- map controller, can delete if don't want -->
+					<div class = "panzoom_map_controller">
+							<div>
+								<button class="reset">reset</button>
+							</div>
+							<div>
+								<button class="zoom-in">+</button>
+							</div>
+							<div>
+								<div class="slider-range"></div>
+								<input type="hidden" class="zoom-range">
+							</div>
+							<div>
+								<button class="zoom-out">-</button>
+							</div>
+					</div>
+				</div>
+			</div>
+<!-- panzoom end here-->
+<script src="js/jquery.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/jquery.panzoom.js"></script>
+<script src="js/echarts-all-dev.js"></script>
+<script src="js/floorChartPlugin.js"></script>
+<script>
+
+/**
+ * demo script here
+ */
+
+/**
+ * need 2 id here
+ * one is the wrapper div name 
+ * second is the chart div name
+ */
+var floorChart = floorChartPlugin.init('set2',{chartName:"echart_floor_1"});
+/* var floorChart2 = floorChartPlugin.init('set3',{chartName:"echart_floor_2"});
+ */
+
+heatData = [[0,0,0]];
+for (var i = 0; i < 50; ++i) {
+	heatData.push([
+       	2000 + Math.random() * 5000,
+        240 + Math.random() * 4600,
+        Math.random()
+    ]);
+}
+for (var j = 0; j < 10; ++j) {
+    var x = 1000 + Math.random() * 3600;
+    var y = 240 + Math.random() * 4200;
+    var cnt = 30 * Math.random();
+    for (var i = 0; i < cnt; ++i) {
+    	heatData.push([
+            x + Math.random() * 200,
+            y + Math.random() * 200,
+            Math.random()
+        ]);
+    }
+}
+// name all points may need
+points = {
+        '1': [0,0],
+        '2': [1000, 0],
+        '3': [1000, 600],
+        '4': [0, 600],
+        '5': [1000,5000],
+        '6': [4000,4000],
+        'a': [2000,2000],
+        'b': [2000,3000],
+        'c': [3000,2000],
+        'd': [3000,3000],
+        'dog1': [2000,1000],
+        'dog2': [2500,1200]
+    };
+// points want to show ,format is like this 
+
+mark =[
+            {name:"1",label:"person one"},
+            {name:"2"},
+            {name:"3",effect : {
+                    show: true,
+                    period:5,
+                    scaleSize:1.4,
+                    // type: "bounce",
+                    bounceDistance:20,
+
+                    // shadowBlur : 0
+                }},
+            {name:"4"},
+            {name:"5"}
+    ];
+// line want to show , format is like this
+line =[
+            [
+             {name:'1'}, 
+             {name:'2'}
+         ],
+         [
+             {name:'2'}, 
+             {name:'3'}
+         ],
+         [
+             {name:'3'}, 
+             {name:'4'}
+         ],
+         [
+	         {name:'4'}, 
+	         {name:'5'}
+      	 ],
+      	 [
+	         {name:'5'}, 
+	         {name:'6'}
+      	  ]
+     ]
+
+//see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#SeriesMap
+
+// dont config heatmap
+// dont config geoCoord, all points will be configed in points
+// all else are ok
+
+// here is the series shows 4 point of wifi example
+var series_one={
+	animation :false,
+		name:"wifi",
+		markPoint:{
+			// you can use your own icon
+			symbol:"image://map/wifi.png",
+			data:[
+		            {name:"a"},
+		            {name:"b"},
+		            {name:"c", effect : {
+                    show: true,
+                    // type: "bounce",
+                    period:2,
+                    shadowBlur : 0
+                }},
+		            {name:"d"}
+			      ]
+		}
+}
+					
+// here is a example show points and lines together			
+var series_2={
+		itemStyle:{
+			normal:{
+				color:"green"
+			}
+		},
+
+		name:"person",
+		//see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#SeriesMarkPoint
+		markPoint:{
+	
+			symbol:"pin",
+			data:mark,
+		},
+		//see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#SeriesMarkLine
+		markLine:{
+			effect:{
+					show: false,
+                    scaleSize: 1,
+                    period: 20,
+                    color: '#fff',
+                    shadowBlur: 3
+				},
+			data:line,
+		}
+}
+					
+// here is example show points with extra information
+var series_3={
+	animation :false,
+		name:"dog",
+		//see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#ItemStyle
+		itemStyle:{
+			normal:{
+				color:"red"
+			}
+		},
+		//see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#SeriesMarkPoint
+		markPoint:{
+			symbol:"star6",
+			data:[
+			    // will show dogxxx as name 
+			    // you also can write your own info in any key
+			    // your ext information is uesd for click or hover event
+				{name:"dog1",label:"dogxxx",ext:{desc:"this is a dog"}},
+				{name:"dog2"}
+			],
+		},
+
+}
+
+
+option = {
+		// see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#Legend
+		legend:{
+			x:'right',
+			padding:10,
+			itemGap:20,
+			itemWidth:40,
+			itemHeight:40,
+			textStyle:{
+				fontSize:20,
+				fontStyle:"oblique",
+				fontWeight:'lighter'
+			},
+			// you can config your own icon
+			data:['heatmap',{name:'wifi',icon:"image://map/wifi.png"},"person","dog"],
+		},
+		// name of heatmap
+		chartLegend:'heatmap',
+		series:[series_one,series_2,series_3],
+		// all points for all map
+ 		points:points,
+/* 		mark:mark,
+		line:line, */
+		heatData:heatData,
+		zoom_max_scale:4,
+		zoom_min_scale:0.1,
+		zoom_increment:0.1
+}
+// doc file:///Users/tssdev2/work/echarts/doc/doc.html#实例方法 
+// see search echarts.config.EVENT
+
+// here is example of how to register click and hover event
+// you can register other events according to the doc above
+floorChart.register_ready_func({callback:click_handler,args:[floorChart]})
+floorChart.register_ready_func({callback:hover_handler,args:[floorChart]})
+
+// here is how to handle events
+function hover_handler(chart){
+	chart.echart.on(echarts.config.EVENT.HOVER,function(param){
+    	var name = param.name;
+    	if (name.indexOf(">")>0){
+    		var from_to = name.split(">");
+    		var from = $.trim(from_to[0]);
+    		var to = $.trim(from_to[1]);
+    		console.log("you hover a line:",from,to)
+    	}else{
+    		console.log("you hover a point:",param.data.name);
+    	}
+		
+		//alert("you hover:"+param.data.name)
+	});
+}
+
+function click_handler(chart){
+	chart.echart.on(echarts.config.EVENT.CLICK,function(param){
+		var name = param.name;
+    	if (name.indexOf(">")>0){
+    		var from_to = name.split(">");
+    		var from = $.trim(from_to[0]);
+    		var to = $.trim(from_to[1]);
+    		alert("you clicked a line:"+from+"->"+to)
+    	}else{
+    		info = "you clicked a point:"+param.data.name;
+    		if (param.data.ext){
+    			for (key in param.data.ext){
+    				info+="\n"+key+ " : " + param.data.ext[key];
+    			}
+    		}
+			alert(info);
+    	}
+	});
+}
+// when finish then set the option to the chart then the chart will show what you want
+floorChart.setOption(option);
+
+
+/* floorChart2.setOption(option); */
+</script>

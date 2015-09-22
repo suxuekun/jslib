@@ -1,0 +1,57 @@
+<link rel="stylesheet" type="text/css" href="css/card.css">
+<script src = "js/jquery.js"></script>
+<script src = "js/card.js"></script>
+<section class="card-container">
+    <div id="card1" class="card ">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+    </div>
+    <div id="card1" class="card ">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+    </div>
+    <div id="card1" class="card ">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+    </div>
+    <div id="card1" class="card ">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+    </div>
+</section>
+<section id="options">
+    <p>
+      <button id="h-flip">Flip Card Horizontal</button>
+      <button id="v-flip">Flip Card Vertical</button>
+    </p>
+</section>
+<section id="options2">
+    <p>
+      <button id = 'p0' class="">position0</button>	
+      <button class="h-flipped">position1</button>
+      <button class="v-flipped">position2</button>
+      <button class="v-flipped h-flipped">position13</button>
+    </p>
+</section>
+<script type="text/javascript">
+		$(".card").click(function(event){
+			var card = event.currentTarget
+			card_func.turn(card,"h-flipped");
+		})
+		flipIt = function(event) {
+			var className = event.target.id + 'ped';
+			card_func.turn(card,className)
+		};
+		posIt = function(event) {
+			 var className = event.target.className;
+			 card_func.turncard(card,className)
+		}
+		$('#h-flip').click(flipIt);
+		$('#v-flip').click(flipIt);
+		$('#p0').click(posIt);
+		$('#options2').find('.h-flipped').click(posIt);
+		$('#options2').find('.v-flipped').click(posIt);
+		$('#options2').find('.h-flipped .v-flipped').click(posIt);
+
+
+</script>

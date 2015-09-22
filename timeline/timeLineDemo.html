@@ -1,0 +1,91 @@
+<link rel="stylesheet" href="css/simpleCssTimeLine.css"/>
+<style type="text/css">
+	.timeline_container:{
+		margin: auto;
+	}
+</style>
+<div id = "timeline"></div>
+<div id = "text"></div>
+<button id = "btn">global</button>
+<idv id = "status"></div>
+<script src="js/jquery.js"></script>
+<script src="js/simpleCssTimeLine.js"></script>
+
+<script type="text/javascript">
+	ori_data ={
+		"name1":{layer:"layer1",name:"name1",value:1},
+		"name2":{layer:"layer2",name:"name2",value:5},
+		"name3":{layer:"layer1",name:"name3",value:1},
+		"name4":{layer:"layer3",name:"name4",value:5},
+		"name5":{layer:"layer2",name:"name5",value:10},
+		"name6":{layer:"layer3",name:"name6",value:5},
+		"name7":{layer:"layer2",name:"name7",value:6},
+		"name8":{layer:"layer4",name:"name8",value:7},
+		"name9":{layer:"layer5",name:"name9",value:2},
+		"name10":{layer:"layer5",name:"name10",value:4},
+	}
+	data = []
+	for (key in ori_data){
+		item = ori_data[key];
+		data.push(item);
+	}
+
+	option = {
+		colors:["#FF0000","#00FF00","#0000FF"],
+		width:300,
+		height:10,
+		globalmove:true,
+		data:data,	
+	}
+	var prex=0;
+	var timeline = SCTL.init($("#timeline"));
+	timeline.setOption(option);
+	$("#status").html(option.globalmove?"true":"false");
+
+	function getConsole(e){
+		child = timeline.getChildByEvent(e);
+		x = timeline.getxFromEvent(e);
+		current = timeline.getCurrentChild();
+
+		currentX = timeline.getCurrentX();
+		currentValue = timeline.getCurrentValue();
+		str= "mouseChild:"+child.attr("id")+"<br/>"+
+				"x:" + x+"<br/>"+
+				"currentX:"+currentX+"<br/>"+
+				"value:"+currentValue+"<br/>";
+		if (current != null){
+				currentName = current.attr("id");
+				str+="current:" + currentName+"<br/>";
+				currentLayer = ori_data[currentName].layer;
+				str+="currentLayer:"+currentLayer+"<br/>"
+		}else{
+			str+="current:null"
+		}
+		return str;
+	}
+
+	$(window).mousemove(function(e){
+		x = timeline.getxFromEvent(e);
+		if (x != prex){
+			str = "event:mousemove<br/>"
+			str += getConsole(e);
+			$("#text").html(str);
+		}
+		prex = x;
+		
+	});
+
+
+	timeline.getRoot().click(function(e){
+		str = "event:click<br/>"
+		str += getConsole(e);
+		$("#text").html(str);
+		//console.log('click',child.attr("id"))
+	});
+	$("#btn").click(function(){
+		option.globalmove = !option.globalmove;
+		timeline.setOption(option);
+	$("#status").html(option.globalmove?"true":"false");
+
+	});
+</script>

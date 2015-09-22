@@ -1,0 +1,48 @@
+.parent {
+	position: absolute;
+    left: 0;
+    right: 0;
+	height: 600px;
+	border: 1px solid #ccc;
+	background-color: #E3E3E3;
+}
+
+.zoom-out {
+	width: 25px;
+}
+
+.zoom-in {
+	margin-top: 8px;
+	width: 25px;
+}
+
+.panzoom{
+	height: 1000px;
+	margin: auto;
+}
+
+.panzoom_map_wrapper {
+	height: 600px;
+	overflow: hidden;
+}
+#slider-range {
+	margin: 10px;
+}
+
+.slider-range {
+	margin: 10px;
+}
+
+.panzoom_map_controller {
+	position: absolute;
+	text-align: center;
+	margin: 20px;
+}
+.panzoom_map_component {
+	position: absolute;
+}
+.pan_map_component{
+	position: absolute;
+	left: 0;
+	right: 0;
+}

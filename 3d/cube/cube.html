@@ -1,0 +1,32 @@
+<link rel="stylesheet" type="text/css" href="css/cube.css">
+<script src = "js/jquery.js"></script>
+<script src = "js/cube.js"></script>
+<section class = "cube-container">
+	<div class = "cube show-front">
+      <figure class="front">1</figure>
+      <figure class="back">2</figure>
+      <figure class="right">3</figure>
+      <figure class="left">4</figure>
+      <figure class="top">5</figure>
+      <figure class="bottom">6</figure>
+	</div>
+</section>
+	<p id="show-buttons">
+      <button class="show-front">Show 1</button>
+      <button class="show-back">Show 2</button>
+      <button class="show-right">Show 3</button>
+      <button class="show-left">Show 4</button>
+      <button class="show-top">Show 5</button>
+      <button class="show-bottom">Show 6</button>
+    </p>
+<script type="text/javascript">
+showPanelButtons = document.querySelectorAll('#show-buttons button');
+for (var i=0, len = showPanelButtons.length; i < len; i++) {
+	showPanelButtons[i].addEventListener( 'click', onButtonClick, false);
+}
+function onButtonClick( event ){
+	var box = $(".cube");
+    name = event.target.className;
+    cube_func.turncube(box,name);
+  };
+</script>

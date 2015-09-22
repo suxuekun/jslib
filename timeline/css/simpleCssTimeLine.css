@@ -1,0 +1,21 @@
+.timeline_container{
+	position:relative;
+}
+.timeline_layer{
+	position:relative;
+}
+.timeline{
+	position:absolute;
+	margin:0 0 0 0;
+	padding: 0 0 0 0;
+	height:10px;
+	border-radius: 4px;
+}
+.time_pointer{
+	left:0;
+	top:0;
+	position:absolute;
+	width:1px;
+	height:100%;
+	background-color:#000;
+}

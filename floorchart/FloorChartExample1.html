@@ -1,0 +1,140 @@
+<link rel="stylesheet" href="css/jquery-ui.css" />
+<link rel="stylesheet" href="css/floorChart.css" />
+
+<!-- panzoom from here-->
+			<!-- wrapper need an id -->
+			<div class="col-xs-6" id = "set2">
+				<div class = "panzoom_map_wrapper panzoom_mouse">
+					<div class = "parent">
+						<div class = "panzoom">
+							<!--  every thing will drag together under chart here -->
+							<img id ="map_bg_img" class="panzoom_map_component" src = "map/50013.png">
+						</div>
+					</div>
+					<!-- chart here need an id -->
+					<div id="echart_floor_1" class = "echart_floor panzoom_map_wrapper pan_map_component" ></div>			
+					<!-- map controller, can delete if don't want -->
+					<div class = "panzoom_map_controller">
+							<div>
+								<button class="reset">reset</button>
+							</div>
+							<div>
+								<button class="zoom-in">+</button>
+							</div>
+							<div>
+								<div class="slider-range"></div>
+								<input type="hidden" class="zoom-range">
+							</div>
+							<div>
+								<button class="zoom-out">-</button>
+							</div>
+					</div>
+				</div>
+			</div>
+<!-- panzoom end here-->
+<script src="js/jquery.js"></script>
+<script src="js/jquery-ui.min.js"></script>
+<script src="js/jquery.mousewheel.js"></script>
+<script src="js/jquery.panzoom.js"></script>
+<script src="js/echarts-all-dev.js"></script>
+<script src="js/floorChartPlugin.js"></script>
+<script>
+// initial chart
+var floorChart = floorChartPlugin.init('set2',{chartName:"echart_floor_1"});
+
+
+points = {
+        '1': [300,700],
+        '2': [1000, 0],
+        '3': [1000, 600],
+        '4': [0, 600],
+        '5': [1000,5000],
+        '6': [4000,4000],
+        'a': [2000,2000],
+        'b': [2000,3000],
+        'c': [3000,2000],
+        'd': [3000,3000],
+        'e': [2000,1000],
+        'f': [2500,1200]
+    };
+points_info = {
+    "1":{name:"1",label:"Jack",ext:{desc:"Jack is here"}},
+    "2":{name:"2",label:"Vikcy",ext:{desc:"Vikcy is here"}},
+    "3":{name:"3",label:"???",ext:{desc:"guess who is this"}},
+    "4":{name:"4"},
+    "5":{name:"5"}
+}
+
+var series_1={
+		itemStyle:{
+			normal:{
+				color:"pink"
+			}
+		},
+		name:"person",
+		//see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#SeriesMarkPoint
+		markPoint:{
+			symbolSize:30,
+			symbol:"image://map/map-pin-red.svg",
+			data:[
+				// only show points 1 and 3
+				points_info["1"],
+				points_info["3"]
+			]
+		}
+}
+
+option = {
+		// see doc https://wilas.techstudio.mobi/echarts/doc/doc.html#Legend
+		legend:{
+			x:'right',
+			padding:10,
+			itemGap:20,
+			itemWidth:40,
+			itemHeight:40,
+			textStyle:{
+				fontSize:20,
+				fontStyle:"oblique",
+			},
+			// you can config your own icon
+			data:[{name:"person",icon:"image://map/map-pin-red-center.svg"}]
+		},
+		// points setting
+		series:[series_1],
+ 		points:points,	
+ 		// zoom setting
+		zoom_max_scale:1.5,// default is 2
+		zoom_min_scale:0.6,// default is 0.2
+		zoom_increment:0.1 // default is 0.1
+}
+console.log(option)
+// set option to show chart
+// ! important
+floorChart.setOption(option);
+
+// handle click event
+floorChart.register_ready_func({callback:click_handler,args:[floorChart]})
+
+function click_handler(chart){
+	chart.echart.on(echarts.config.EVENT.CLICK,function(param){
+		var name = param.name;
+    	if (name.indexOf(">")>0){
+    		var from_to = name.split(">");
+    		var from = $.trim(from_to[0]);
+    		var to = $.trim(from_to[1]);
+    		alert("you clicked a line:"+from+"->"+to)
+    	}else{
+    		info = "you clicked a point:"+param.data.name;
+    		if (param.data.ext){
+    			for (key in param.data.ext){
+    				info+="\n"+key+ " : " + param.data.ext[key];
+    			}
+    		}
+			alert(info);
+    	}
+	});
+}
+
+
+
+</script>
