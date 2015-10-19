@@ -5,11 +5,6 @@
 	var TOP = "top";
 	var RIGHT = "right";
 	var BOTTOM = "bottom";
-
-	var LEFTTOP = LEFT+TOP;
-	var LEFTBOTTOM = LEFT+BOTTOM;
-	var RIGHTTOP = RIGHT+TOP;
-	var RIGHTBOTTOM = RIGHT+BOTTOM;
 	
 function floorChartClass(){
 	var _self = this;
@@ -27,10 +22,6 @@ function floorChartClass(){
 	this.readyList = [];
 	this.optionExt = null;
 	this.chart_legend_selected = null;
-
-	this.ori_w = -1;
-	this.ori_h = -1;
-	centerMode = LEFTTOP;
 	
 	this.defaultEmptySeries = {
             type: 'map',
@@ -211,35 +202,8 @@ floorChartClass.prototype.zoom_in_func = function(){
 }
 
 floorChartClass.prototype.zoom_reset_func = function(){
-	if (this.ori_w >0 && this.ori_h >0)
-	{
-		var w1 = this.ori_w;
-		var w2 = this.panzoomRoot.find(".parent").width();
-		var h1 = this.ori_h;
-		var h2 = this.panzoomRoot.find(".parent").height();
-
-		var scaleW = w2/w1;
-		var scaleH = h2/h1;
-		var scale = scaleW>scaleH?scaleW:scaleH;
-		var xc = 0;
-		var yc = 0;
-		if (scale<0.1) scale = 0.1;
-
-		xc = -(w1-w2)/2;
-		yc = -(h1-h2)/2;
-
-		this.slide_to_scale(scale);
-		this.panzoomRoot.find('.panzoom').panzoom("pan",xc*scale,yc*scale,{relative: true});
-	}else{
-		this.slide_to_value(this.zoom_initial);
-	}
+	this.slide_to_value(this.zoom_initial);
 }
-
-floorChartClass.prototype.setCenterMode = function(w,h){
-	this.ori_w = w;
-	this.ori_h = h;
-}
-
 floorChartClass.prototype.mouse_wheel_func = function( e ) {
     e.preventDefault();
     var delta = e.delta || e.originalEvent.wheelDelta;
@@ -580,7 +544,7 @@ floorChartClass.prototype.set_heatmap_visible = function(visible){
 floorChartClass.prototype.panzoomReset = function(){
 	if (!this.panzoomRoot) return;
 	if (!this.panzoomRoot.find('.panzoom')) return;
-	//this.panzoomRoot.find('.panzoom').panzoom("reset").trigger('reset');
+	this.panzoomRoot.find('.panzoom').panzoom("reset").trigger('reset');
 	this.zoom_reset_func();
 }
 

@@ -4,54 +4,193 @@
 		margin: auto;
 	}
 </style>
-<div id = "timeline"></div>
-<div id = "text"></div>
-<button id = "btn">global</button>
-<idv id = "status"></div>
+<div id = "text" style="width:200px;float:left"></div>
+<div id = "timeline" style= "float:left;width:600px"></div>
+
+<button id = "btn">move type</button>
+<div id = "status"></div>
+<button id = "btn2">click type</button>
+<div id = "status2"></div>
 <script src="js/jquery.js"></script>
 <script src="js/simpleCssTimeLine.js"></script>
 
 <script type="text/javascript">
-	ori_data ={
-		"name1":{layer:"layer1",name:"name1",value:1},
+	old_data = {
+		"name1":{layer:"layer3",name:"name1",value:1},
 		"name2":{layer:"layer2",name:"name2",value:5},
 		"name3":{layer:"layer1",name:"name3",value:1},
 		"name4":{layer:"layer3",name:"name4",value:5},
-		"name5":{layer:"layer2",name:"name5",value:10},
+		"name5":{layer:"layer2",name:"name5",value:1},
+		"name51":{layer:"layer2",name:"name51",value:1},
+		"name52":{layer:"layer2",name:"name52",value:1},
+		"name53":{layer:"layer2",name:"name53",value:1},
+		"name54":{layer:"layer2",name:"name54",value:1},
+		"name55":{layer:"layer2",name:"name55",value:1},
+		"name56":{layer:"layer2",name:"name56",value:1},
+		"name57":{layer:"layer2",name:"name57",value:1},
+		"name58":{layer:"layer2",name:"name58",value:1},
+		"name59":{layer:"layer2",name:"name59",value:1},
+		"name511":{layer:"layer2",name:"name511",value:1},
+		"name521":{layer:"layer2",name:"name521",value:1},
+		"name531":{layer:"layer2",name:"name531",value:1},
+		"name541":{layer:"layer2",name:"name541",value:1},
+		"name551":{layer:"layer2",name:"name551",value:1},
+		"name561":{layer:"layer2",name:"name561",value:1},
+		"name571":{layer:"layer2",name:"name571",value:1},
+		"name581":{layer:"layer2",name:"name581",value:1},
+		"name591":{layer:"layer2",name:"name591",value:1},
+		"name512":{layer:"layer2",name:"name512",value:1},
+		"name522":{layer:"layer2",name:"name522",value:1},
+		"name532":{layer:"layer2",name:"name532",value:1},
+		"name542":{layer:"layer2",name:"name542",value:1},
+		"name552":{layer:"layer2",name:"name552",value:1},
+		"name562":{layer:"layer2",name:"name562",value:1},
+		"name572":{layer:"layer2",name:"name572",value:1},
+		"name582":{layer:"layer2",name:"name582",value:1},
+		"name592":{layer:"layer2",name:"name592",value:1},
+
+
 		"name6":{layer:"layer3",name:"name6",value:5},
 		"name7":{layer:"layer2",name:"name7",value:6},
 		"name8":{layer:"layer4",name:"name8",value:7},
 		"name9":{layer:"layer5",name:"name9",value:2},
 		"name10":{layer:"layer5",name:"name10",value:4},
 	}
+	ori_data ={
+
+	}
+
+	function gen(){
+		var list = {};
+		for (i=0;i<1000;i++){
+			var name = "gen"+i;
+			var layer = "layer"+Math.floor(Math.random()*5);
+			var value = 1;
+			var obj = {};
+			obj.name = name;
+			obj.layer = layer;
+			obj.value = value;
+			list[name] = obj;
+		}
+		return list;
+
+	}
+	var randomData = gen();
+
+	reGen(0);
+
+	function reGen(k){
+		ori_data = {};
+		for (key in old_data){
+			item =old_data[key];
+			ori_data[key] = item;
+		}
+		for (i=0;i<k;i++){
+			var name = "gen"+i;
+			ori_data[name] = randomData[name];
+		}
+		var name = "gen_blank";
+		var layer = "layer"+Math.floor(Math.random()*5);
+		var value = 300-k;
+		var obj = {};
+		obj.name = name;
+		obj.layer = "layer0";
+		obj.value = value;
+		ori_data[name] = obj;
+	}
+
+
+
+
+	next = 1;
+	next2 = 1;
+
+	count = 0;
+
+
+	var timeline = SCTL.init($("#timeline"));
+
 	data = []
 	for (key in ori_data){
 		item = ori_data[key];
 		data.push(item);
 	}
-
 	option = {
-		colors:["#FF0000","#00FF00","#0000FF"],
-		width:300,
-		height:10,
-		globalmove:true,
-		data:data,	
+			colors:["#808080","#0000FF","#00FF00","#C8FF03","#D98C09","#E05409","#FF0000"],
+			data:data,	
 	}
-	var prex=0;
-	var timeline = SCTL.init($("#timeline"));
-	timeline.setOption(option);
-	$("#status").html(option.globalmove?"true":"false");
 
-	function getConsole(e){
-		child = timeline.getChildByEvent(e);
-		x = timeline.getxFromEvent(e);
+	timeline.setOption(option);
+
+	timeline.bind(SCTL.EVENT.CHANGE,function(e){
+		showConsole();
+		console.log('onchange',e,timeline)
+	})
+
+	var itv = setInterval(function(){
+		count++;
+		reGen(count);
+
+		// option = {
+		// 		colors:["#FF0000","#00FF00","#0000FF"],
+		// 		data:data,	
+		// }
+		data = []
+		for (key in ori_data){
+			item = ori_data[key];
+			data.push(item);
+		}
+		option.data = data;
+
+		timeline.setOption(option);
+	},20);
+	setTimeout(function(){
+		clearInterval(itv);
+	},5000)
+
+
+	// console
+	var prex=0;
+	var next = 1;
+	var next2 = 1;
+
+	traceType = [SCTL.ACTION.NONE,SCTL.ACTION.LOCAL,SCTL.ACTION.GLOBAL]
+
+	$("#status").html(timeline.option.move);
+	$("#status2").html(timeline.option.click);
+
+	$("#btn").click(function(){
+
+		option.move = traceType[next];
+		timeline.setOption(option);
+		next++;
+		if (next >=traceType.length){
+			next = 0;
+		}
+		$("#status").html(option.move);
+
+	});
+	$("#btn2").click(function(){
+
+		option.click = traceType[next2];
+		timeline.setOption(option);
+		next2++;
+		if (next2 >=traceType.length){
+			next2 = 0;
+		}
+		$("#status2").html(option.click);
+
+	});
+
+	function getConsole(){
+		//child = timeline.getChildByEvent(e);
+		// x = timeline.getxFromEvent(e);
 		current = timeline.getCurrentChild();
 
 		currentX = timeline.getCurrentX();
 		currentValue = timeline.getCurrentValue();
-		str= "mouseChild:"+child.attr("id")+"<br/>"+
-				"x:" + x+"<br/>"+
-				"currentX:"+currentX+"<br/>"+
+		// str= "mouseChild:"+child.attr("id")+"<br/>"+
+		str = 	"currentX:"+currentX+"<br/>"+
 				"value:"+currentValue+"<br/>";
 		if (current != null){
 				currentName = current.attr("id");
@@ -63,29 +202,29 @@
 		}
 		return str;
 	}
-
-	$(window).mousemove(function(e){
-		x = timeline.getxFromEvent(e);
-		if (x != prex){
-			str = "event:mousemove<br/>"
-			str += getConsole(e);
-			$("#text").html(str);
-		}
-		prex = x;
-		
-	});
-
-
-	timeline.getRoot().click(function(e){
-		str = "event:click<br/>"
-		str += getConsole(e);
+	function showConsole(){
+		str = getConsole();
 		$("#text").html(str);
-		//console.log('click',child.attr("id"))
-	});
-	$("#btn").click(function(){
-		option.globalmove = !option.globalmove;
-		timeline.setOption(option);
-	$("#status").html(option.globalmove?"true":"false");
+	}
 
-	});
+	// $(window).mousemove(function(e){
+	// 	x = timeline.getxFromEvent(e);
+	// 	if (x != prex){
+	// 		str = "event:mousemove<br/>"
+	// 		str += getConsole(e);
+	// 		$("#text").html(str);
+	// 	}
+	// 	prex = x;
+		
+	// });
+
+
+
+
+	// timeline.getRoot().click(function(e){
+	// 	str = "event:click<br/>"
+	// 	str += getConsole(e);
+	// 	$("#text").html(str);
+	// 	//console.log('click',child.attr("id"))
+	// });
 </script>

@@ -1,0 +1,151 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+	<script src = "js/jquery.js"></script>
+	<script src = "js/moment.min.js"></script>
+	<script src = "js/echarts-all-dev.js"></script>
+
+	<script src = "js/event_manager.js"></script>
+	<script src = "js/ajax_pool.js"></script>
+</head>
+<body>
+	<style>
+		#chart{
+			width:600;
+			height:400;
+			margin:auto;
+		}
+	</style>
+	<div id ="chart"></div>
+
+
+	<script>
+var chart = echarts.init($("#chart")[0]);
+
+var data1 = [120, 132, 101, 134, 90, 230, 210];
+var data2 = [22000, 18200, 19100, 23400, 29000, 33000, 31000];
+var data3 = [];
+
+var scale = 1;
+var scale2 = 1;
+
+var range = ['周一','周二','周三','周四','周五','周六','周日'];
+
+var formatter1 = function(value){
+    return value + " km";
+}
+var formatter2 = function(value){
+    return "$ "+value;
+}
+var max1 = 0;
+for (key in data1){
+    var value = data1[key];
+    max1 = max1>value ?max1:value;
+}
+
+var max2 = 0;
+for (key in data2){
+    var value = data2[key];
+    data2[key] *=-1;
+    max2 = max2>value ?max2:value;
+}
+
+scale = Math.ceil(max2/10 / max1)*10;
+
+if (scale <10 && scale >1){
+    scale = 1;
+}
+if (scale <1 && scale >0.1){
+    scale = 1;
+}
+if (scale <0.1){
+    scale2 = Math.ceil(0.1/scale)*10;
+}
+for (key in data1){
+    data3[key] = data1[key]*scale;
+}
+
+console.log(scale,scale2);
+
+var formatter = function(value){
+    var absValue = Math.abs(value);
+    if (value >0){
+        return formatter1(absValue/scale);
+    }
+    if (value <0){
+        return formatter2(absValue/scale2);
+    }
+    return 0;
+}
+
+var option = {
+    legend: {
+        data:['data1','data2']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            magicType : {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    tooltip:{
+        show:true,
+        trigger:"axis",
+        formatter:function(params, ticket, callback){
+            var html = "";
+            for (key in params){
+                if (html != ""){
+                    html+="<br/>";
+                }
+                var item = params[key];
+                var series = option.series[item.seriesIndex];
+                var str = item.seriesName + " : " + formatter(item.value);
+                html += str;
+            }
+            html = item.name+"<br/>"+html
+            console.log(params);
+            callback(ticket,html);
+            return html;
+        }
+    },
+    xAxis : [
+        {
+            splitLine: {show:false},
+            type : 'category',
+            boundaryGap : false,
+            data : range
+        }
+    ],
+    yAxis : [
+        {
+            splitLine: {show:false},
+            type : 'value',
+            axisLabel:{
+                formatter:formatter
+            }
+        }
+    ],
+    series : [
+        {
+            name:'data1',
+            type:'line',
+            stack: 'number',
+            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+            data:data3
+        },
+        {
+            name:'data2',
+            type:'line',
+            stack: 'number',
+            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+            data: data2
+        },
+        
+    ]
+};
+chart.setOption(option);
+	</script>
+</body>
+</html>

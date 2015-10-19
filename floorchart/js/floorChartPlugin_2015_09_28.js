@@ -5,11 +5,6 @@
 	var TOP = "top";
 	var RIGHT = "right";
 	var BOTTOM = "bottom";
-
-	var LEFTTOP = LEFT+TOP;
-	var LEFTBOTTOM = LEFT+BOTTOM;
-	var RIGHTTOP = RIGHT+TOP;
-	var RIGHTBOTTOM = RIGHT+BOTTOM;
 	
 function floorChartClass(){
 	var _self = this;
@@ -26,11 +21,6 @@ function floorChartClass(){
 	this.chartName = "#echart_floor";
 	this.readyList = [];
 	this.optionExt = null;
-	this.chart_legend_selected = null;
-
-	this.ori_w = -1;
-	this.ori_h = -1;
-	centerMode = LEFTTOP;
 	
 	this.defaultEmptySeries = {
             type: 'map',
@@ -104,10 +94,6 @@ floorChartClass.prototype.init = function(divName,option){
 	this.setOption(option)
 }
 
-floorChartClass.prototype.reset_legend = function(){
-	this.chart_legend_selected = null;
-}
-
 floorChartClass.prototype.reset_panzoom = function(){
 	this.zoom_max_scale = 2;
 	this.zoom_min_scale = 0.2;
@@ -150,7 +136,6 @@ floorChartClass.prototype.reset_chart = function(refresh){
 	        	}
 	        }
 	    },
-	    animationDuration:20,
 	    animationDurationUpdate :20,
 	    series : [this.defaultSeries,this.defaultHeatmap]
 	};
@@ -161,7 +146,6 @@ floorChartClass.prototype.reset_chart = function(refresh){
 
 floorChartClass.prototype.reset = function(refresh){
 	this.reset_panzoom();
-	this.reset_legend();
 	this.reset_chart(refresh);
 }
 
@@ -211,35 +195,8 @@ floorChartClass.prototype.zoom_in_func = function(){
 }
 
 floorChartClass.prototype.zoom_reset_func = function(){
-	if (this.ori_w >0 && this.ori_h >0)
-	{
-		var w1 = this.ori_w;
-		var w2 = this.panzoomRoot.find(".parent").width();
-		var h1 = this.ori_h;
-		var h2 = this.panzoomRoot.find(".parent").height();
-
-		var scaleW = w2/w1;
-		var scaleH = h2/h1;
-		var scale = scaleW>scaleH?scaleW:scaleH;
-		var xc = 0;
-		var yc = 0;
-		if (scale<0.1) scale = 0.1;
-
-		xc = -(w1-w2)/2;
-		yc = -(h1-h2)/2;
-
-		this.slide_to_scale(scale);
-		this.panzoomRoot.find('.panzoom').panzoom("pan",xc*scale,yc*scale,{relative: true});
-	}else{
-		this.slide_to_value(this.zoom_initial);
-	}
+	this.slide_to_value(this.zoom_initial);
 }
-
-floorChartClass.prototype.setCenterMode = function(w,h){
-	this.ori_w = w;
-	this.ori_h = h;
-}
-
 floorChartClass.prototype.mouse_wheel_func = function( e ) {
     e.preventDefault();
     var delta = e.delta || e.originalEvent.wheelDelta;
@@ -333,7 +290,6 @@ floorChartClass.prototype.redraw = function(transform){
 	
 	// check series should not return happened
 	if (this.echartOption.series.length <2) {
-		console.log("some thing wrong")
 		return;
 	}
 	
@@ -342,19 +298,9 @@ floorChartClass.prototype.redraw = function(transform){
 	var heatmap_index = number_series - 1;
 	
 	this.echartOption.series[default_index].geoCoord = ps;
-	if (this.echartOption.legend && this.chart_legend_selected){
-		this.echartOption.legend.selected = this.chart_legend_selected;
-	}
 	if (hs.length == 0){
 		this.echartOption.series[heatmap_index].data = [];
 	}else{
-		if (this.chart_legend_selected){
-			for (key in this.chart_legend_selected){
-				if (key == this.chartLegend){
-					this.heatmapVisiable = this.chart_legend_selected[key];
-				}
-			}
-		}
 		if (this.heatmapVisiable){
 			this.echartOption.series[heatmap_index].data = hs;
 			this.echartOption.series[heatmap_index].blurSize = this.blurSize*blurScale;
@@ -367,7 +313,6 @@ floorChartClass.prototype.redraw = function(transform){
 			this.echartOption[key] = this.optionExt[key];
 		}
 	}
-	this.echart.clear();
 	this.echart.setOption(this.echartOption,true);
 }
 /**
@@ -414,7 +359,6 @@ floorChartClass.prototype.setOption = function(option,type){
 	if (this.echartOption.series.length ==0){
 		this.echartOption.series[0] = this.defaultSeries;
 		this.echartOption.series[1] = this.defaultHeatmap
-		console.log("something wrong happened");
 	}
 	var number_series = this.echartOption.series.length;
 	var default_index = number_series - 2;
@@ -505,7 +449,6 @@ floorChartClass.prototype.ready = function(){
 	this.echart = echarts.init(this.panzoomRoot.find(this.chartName)[0]);
 	this.echart.on(echarts.config.EVENT.LEGEND_SELECTED,$.proxy(function(param){
 		if(this.chartName && param && param.selected){
-			this.chart_legend_selected = param.selected;
 			for (key in param.selected){
 				if (key == this.chartLegend){
 					
@@ -580,7 +523,7 @@ floorChartClass.prototype.set_heatmap_visible = function(visible){
 floorChartClass.prototype.panzoomReset = function(){
 	if (!this.panzoomRoot) return;
 	if (!this.panzoomRoot.find('.panzoom')) return;
-	//this.panzoomRoot.find('.panzoom').panzoom("reset").trigger('reset');
+	this.panzoomRoot.find('.panzoom').panzoom("reset").trigger('reset');
 	this.zoom_reset_func();
 }
 
