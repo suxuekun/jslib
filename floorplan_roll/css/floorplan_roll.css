@@ -1,0 +1,25 @@
+.foldContainer{
+	left:20%;
+	width:300px;
+	position: absolute;
+	perspective: 1200px;
+}
+.black{
+	background:rgba(0,0,0,0.1);
+}
+.card_fold{
+	transform: rotateX( 75deg ) translateZ(0px);
+}
+.card_unfold{
+	transform: rotateX( 0deg ) translateZ(400px);
+}
+.card{
+	bottom:0px;
+	position: absolute;
+	transform-style: preserve-3d;
+	width:100%;
+	height:200px;
+	transition: transform 0.7s;
+	transform-origin: center bottom;
+	backface-visibility:hidden;
+}

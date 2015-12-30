@@ -1,0 +1,107 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.custom.js"></script>
+	<script type="text/javascript" src = "js/wilasCanvasLite.js"></script>
+	<script type="text/javascript" src = "js/TableHeatmap.js"></script>
+	<style>
+		#myCanvas{
+			position:absolute;
+		}
+		#wrapper{
+			height:500px;
+		}
+	</style>
+	<script>
+		$(function(){
+			var container = document.getElementById('th');
+			var th = TableHeatmap.init(container);
+
+			var ti = 10;
+			var tj = 30;
+			var data = {
+
+			}
+			data.labelx = [];
+			data.labely = [];
+			data.data=[];
+			for (var j=0;j<tj;j++){
+				data.labelx.push("labelx"+j);
+			}
+			for (var i=0;i<ti;i++){
+				data.labely.push("labely"+i);
+			}
+			for (var i=0;i<ti;i++){
+				var row = [];
+				for (var j=0;j<tj;j++){
+					var cell = (tj-j)*1000+ (ti/2 - Math.abs(i-ti/2))*10000;
+					row.push(cell);
+				}
+				data.data.push(row);
+			}
+			// console.log(data.data);
+
+
+			// var data = {
+			// 	labelx:["a1","a2","a3","verylong"],
+			// 	labely:["10","20","100","200","1000"],
+			// 	data:[
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 	]
+			// }
+
+		// fontSize:15,
+		// padding:4,
+		// textTopFix:3,
+		// fontFamily:"Times New Roman",
+		// labelZ:20,
+		// pointerZ:30,
+		// heatmapZ:10,
+		// pointerAlpha:0.3,
+		// pointerColor:"black",
+		// pointerTextColor:"white",
+		// lineColor:"black",
+		// sumTotalRow:false,
+		// subTotalCol:false,
+		// heatColorAlpha:0.8,
+		// heatColorUInt:0xff0000,
+
+
+			th.setOption({
+				fontSize:20,
+				sumTotalRow:true,
+				sumTotalCol:true,
+
+			})
+			th.setData(data);
+			$(container).mousemove(function(e){
+				// console.log(th.info.i,th.info.j,th.info.data,th.info);
+			})
+			$("#btn").click(function(){
+				var font = $("#ipt").val();
+				font = parseInt(font,10);
+				if (font == NaN) return;
+				th.setOption({
+					fontSize:font,
+				})
+			})
+
+		})
+	</script>
+</head>
+<body>
+	<input type = "input" id = "ipt"/>
+	<input value = "changeFont" type = "button" id = "btn"/>
+	<div id ="wrapper">
+		<div id = 'th'></div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="sillyboy" />
+<script type="text/javascript" src = "js/jquery.js"></script>
+<script type="text/javascript" src = "js/floorplan_roll.js"></script>
+<link rel = "styleSheet" href ="css/floorplan_roll.css"></link>
+<style>
+#container{
+	left:100px;
+	top:20px;
+	padding:0px;
+	margin:0px;
+	width:500px;
+	text-align: center;
+	height:600px;
+	border:red 1px solid;
+	/*overflow:hidden;*/
+	position:relative;
+}
+.levelmap{
+	width:300px;
+	height:200px;
+}
+</style>
+<title>sillyboy</title>
+
+<script>
+$(function(){
+	var container = $("#container");
+	var clickFunc = function(params){
+		console.log(params);
+	}
+
+	floorplanRoll.init(container);
+	var data = [];
+	for (var i=0;i<1;i++){
+		var d = {id:"a"+i,content:"<img class ='levelmap' src = '60013.png'/>",click:clickFunc};
+		data.push(d);
+	}
+	container.floorplanRoll.setData(data);
+
+	
+
+
+	var resizeImage = function(img){
+		console.log(img);
+		console.log(img.prop("naturalWidth"),img.prop("naturalHeight"));
+		var oriW = img.prop("naturalWidth");
+		var oriH = img.prop("naturalHeight");
+		var toW = img.width();
+		var toH = img.height();
+		
+		var scaleOri = oriW/oriH;
+		var scale = toW/toH;
+		if (scaleOri > scale){
+			toH = toW/scaleOri
+		}else{
+			toW = toH*scaleOri;
+		}
+		img.width(toW);
+		img.height(toH);
+		
+		
+		
+	}
+	var maps = container.find(".levelmap");
+	maps.load(function(){
+		var map = $(this);
+		console.log(map);
+		resizeImage(map);
+	})
+	maps = $("#foldContainer").find(".levelmap")
+	maps.load(function(){
+		var map = $(this);
+		console.log(map);
+		resizeImage(map);
+	})
+
+})
+</script>
+
+</head>
+
+
+<body>
+	<div id = "foldContainer">
+		<div id = "title"></div>
+		<img class= "levelmap" src = "60013.png"/>
+	</div>
+	<div id = "container">
+	</div>
+</body>
+</html>
