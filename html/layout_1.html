@@ -1,0 +1,82 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script type="text/javascript">
+	</script>
+	<style>
+		.border{
+			border:1px solid black;
+		}
+		.border.red{
+			border:1px solid red;
+		}
+		.box{
+			box-sizing:border-box;
+		}
+		.w{
+			position:relative;
+			width:100%;
+			height:100%;
+		}
+		.t{
+			height:150px;
+		}
+		.l,.r{
+			position:relative;
+			height:100%;
+		}
+		.lw{
+			left:0;
+			right:0;
+			width:100%;
+		}
+		.r{
+			border-left:1px solid black;
+		}
+		.abs{
+			position:absolute;
+		}
+		.dyn{
+			overflow:auto;
+			height:auto;
+			background:red;
+		}
+		.mid{
+			top:150px;
+		}
+		.btm{
+			bottom:0px;
+		}
+		.btm2{
+			bottom:300px;
+		}
+		.b{
+			background:blue;
+			height:300px;
+		}
+	</style>
+</head>
+<body>
+	<div id="content">
+		<div class = "w">
+			<div class = " col-xs-10 l">
+				<div class = " lw abs t">
+				</div>
+				<div class = " lw abs dyn mid btm">
+				</div>
+			</div>
+			<div class = " col-xs-2 r">
+				<div class = " lw abs t">
+				</div>
+				<div class = " lw abs dyn mid btm2">
+				</div>
+				<div class = " lw abs b btm">
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

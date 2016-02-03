@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xmlns:context="http://www.springframework.org/schema/context"  
+ xmlns:util="http://www.springframework.org/schema/util" 
+ xmlns:mvc="http://www.springframework.org/schema/mvc"
+ xmlns:security="http://www.springframework.org/schema/security"
+ xmlns:aop="http://www.springframework.org/schema/aop"
+ xmlns:tx="http://www.springframework.org/schema/tx"
+ xmlns:ws="http://www.springframework.org/schema/web-services"
+ xmlns:p="http://www.springframework.org/schema/p"
+ xsi:schemaLocation="
+ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services.xsd">  
+ 
+ <context:component-scan base-package="com.techstudio.rest" />
+ <context:component-scan base-package="com.techstudio.dao.dashboard" /> 
+ <context:component-scan base-package="com.techstudio.form.controller" />  
+ <context:component-scan base-package="com.techstudio.common" />
+ 
+ <context:property-placeholder location="classpath:config.properties" />
+ 
+ 
+ <mvc:annotation-driven />
+ <tx:annotation-driven/>
+ 
+
+ 
+ <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+	  <property name="driverClassName" value="${database.driver}" />  
+	  <property name="url" value="${database.url}" />  
+	  <property name="username" value="${database.user}" />  
+	  <property name="password" value="${database.password}" />  
+ </bean>    
+ 
+ <bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes" value="application/json" />
+	</bean>
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	    <property name="messageConverters">
+	      <list>
+	        <ref bean="jsonHttpMessageConverter"/>
+	      </list>
+	    </property>
+ </bean>
+ 
+ 	 
+ <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">  
+  <property name="sessionFactory" ref="sessionFactory" /> 
+ </bean>
+ 
+ <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">  
+  <property name="dataSource" ref="dataSource" />   
+  <property name="hibernateProperties">  
+   <props>  
+    <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>  
+    <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+    <prop key="hibernate.hbm2ddl.auto">update</prop>
+    <prop key="current_session_context_class">thread</prop>
+    <!-- Enabling second level cache for hibernate -->
+	<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+	<prop key="hibernate.cache.provider_configuration_file_resource_path">/WEB-INF/ehcache.xml</prop>
+	<prop key="hibernate.cache.use_query_cache">true</prop>
+	<prop key="hibernate.cache.use_second_level_cache">true</prop>
+   </props>  
+  </property>
+  
+  <property name="packagesToScan">
+	<list>
+		<value>com.techstudio.model.dashboard</value>
+	</list>
+  </property>
+  
+ </bean> 
+ 
+  
+ <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />  
+ 
+ 
+ <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+ 	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    <property name="prefix" value="/WEB-INF/views/"/>
+    <property name="suffix" value=".jsp"/> 
+    <property name="redirectHttp10Compatible" value="false" />
+ </bean>  
+ 
+   <!--Spring message -->
+  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="i18n/messages"/>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+        <property name="defaultEncoding" value="UTF-8" />
+  </bean>
+  
+  <!--LoadPic Setting-->
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+  	 <!-- setting maximum upload size -->
+        <property name="maxUploadSize" value="2048000" />
+  </bean>
+  
+  
+	
+	<!--For email setting--> 
+   <!-- our Authenticator implementation -->
+	<bean id="WilasMailAuthenticator" class="com.techstudio.common.WilasMailAuthenticator">
+		<constructor-arg value="${email.Account}" />
+		<constructor-arg value="${email.Password}" />	
+	</bean>
+
+        <!-- now setup an authenticated session -->
+	<bean id="mailSession" class="javax.mail.Session" factory-method="getInstance">
+		<constructor-arg>
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtps.auth">true</prop>
+				<prop key="mail.smtp.socketFactory.port">25</prop>
+			</props>
+		</constructor-arg>
+		<constructor-arg ref="WilasMailAuthenticator" />
+	</bean>
+	
+	<bean id="restBlockNonLocalhost" class="java.lang.Boolean">
+		<constructor-arg value="false"/>
+	</bean>
+
+    <!-- and configure the MailSender with the authenticated session -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${email.Server}" />
+		<property name="session" ref="mailSession" />
+		<property name="defaultEncoding" value="UTF-8"/> 
+	</bean>
+
+	<!-- this is a template message that we can pre-load with default state -->
+	<bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
+		<property name="from" value="wilas.support@techstudio.com.sg " />
+		<property name="subject" value="WILAS" />
+	</bean>
+ 
+	<bean id="easyMail" class="com.techstudio.common.EasyMail">
+		<constructor-arg ref="mailSender" />
+		<constructor-arg ref="templateMessage" />
+	</bean>
+	
+   
+	<!-- security -->
+	<security:global-method-security pre-post-annotations="enabled" />
+	
+	<!-- security direct with ldap
+	<security:http use-expressions="true">
+		<security:http-basic />
+		<security:form-login login-page="/login.wilas"
+			default-target-url="/ffdetail.wilas" always-use-default-target="true" authentication-failure-url="/fail2login.wilas" />
+		<security:logout logout-success-url="/login.wilas" />
+	</security:http>
+	<security:authentication-manager>
+		<security:ldap-authentication-provider
+			user-search-filter="(uid={0})"
+			user-search-base=""
+			group-search-filter="(uniqueMember={0})"
+			group-search-base="ou=groups"
+			group-role-attribute="cn"
+			role-prefix="ROLE_"
+			user-details-class="inetOrgPerson"/>
+	</security:authentication-manager>
+	<security:ldap-server url="ldap://localhost:10389/dc=wilas,dc=techstudio,dc=com" 
+			manager-dn="cn=admin,dc=wilas,dc=techstudio,dc=com" manager-password="tss168"/>
+	-->
+	<!-- security with cas integration & ldap user service-->
+	<!-- Security configuration for REST services. -->
+	
+	<security:http entry-point-ref="casProcessingFilterEntryPoint">
+		<security:logout logout-success-url="/caslogout.wilas" /> <!-- todo: create page to redirect to cas -->
+		<security:custom-filter ref="casAuthenticationFilter" after="CAS_FILTER"/>
+	</security:http>
+	
+	<security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="casAuthenticationProvider"/>
+    </security:authentication-manager>
+    
+    <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+        <property name="loginUrl" value="${cas.server.url}/login"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+    </bean>
+	<bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <property name="userDetailsService" ref="ldapUserService"/>
+        <property name="serviceProperties" ref="serviceProperties" />
+        <property name="ticketValidator">
+            <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                <constructor-arg index="0" value="${cas.server.url}" />
+                <!-- 
+                <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+                <property name="proxyCallbackUrl" value="https://sg.techstudio.mobi:8815/analytics/secure/receptor" />
+                 -->
+            </bean>
+        </property>
+        <property name="key" value="analytics"/>
+    </bean>
+    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
+	<bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationFailureHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+                <property name="defaultFailureUrl" value="/casfailed.jsp"/>
+            </bean>
+        </property>
+        <property name="authenticationSuccessHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+                <property name="defaultTargetUrl" value="/"/>
+            </bean>
+        </property>
+        <!-- 
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+        <property name="proxyReceptorUrl" value="https://sg.techstudio.mobi:8815/analytics/secure/receptor" />
+         -->
+    </bean>
+    <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
+        <property name="service" value="${cas.service.url}/j_spring_cas_security_check"/>
+        <property name="sendRenew" value="false"/>
+    </bean>
+	<security:ldap-user-service id="ldapUserService"
+			user-search-filter="(uid={0})"
+			user-search-base=""
+			group-search-filter="(uniqueMember={0})"
+			group-search-base="ou=groups"
+			group-role-attribute="cn"
+			role-prefix="ROLE_"
+			user-details-class="inetOrgPerson"/>
+	<security:ldap-server url="${ldap.server.url}" 
+			manager-dn="${ldap.manager-dn}" manager-password="${ldap.manager-password}"/>
+	<bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />	 
+
+
+	
+
+</beans>  

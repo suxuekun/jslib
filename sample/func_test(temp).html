@@ -1,0 +1,220 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script>
+
+	// function A(arg1,arg2){
+	// 	this.arg1 = arg1;
+	// 	this.arg2 = arg2;
+	// }
+	// methods = {
+	// 	a:function(){
+
+	// 	},
+	// 	b:function(){
+
+	// 	}
+	// }
+	// A.prototype = Object.create({},methods);
+	// console.dir(A);
+
+
+	(function(_global){
+		var defineProp = Object.defineProperty;
+		console.log(defineProp);
+		var defaultKeys = ["initialize","uper","constructor"];//,"class";
+		var defaultKeyConfig = {
+			configurable:false,
+			enumerable:false,
+			writeable:false,
+		}
+		var customizedKeyConfig = {
+			configurable:false,
+			enumerable:true,
+			writeable:false,
+		}
+		function makeClass(option){
+			if (!option || typeof option != "object") {
+				option = {};
+			}
+			var className = option.className || "";
+			var initialize = option.initialize;
+			var uper = option.uper;
+			var methods = option.methods;
+			var attributes = option.attributes;
+
+			if (initialize == null){
+				initialize = function(){};
+			}
+			if (methods == null){
+				methods ={};
+			}
+			if (attributes == null){
+				attributes = {};
+			}
+			//default
+			// class
+			var clazz = new Function(
+			     "return function " + className + "(){this.initialize.apply(this,arguments);}"
+			)();
+
+			// super
+			if (uper != null){
+				clazz.prototype = Object.create(uper.prototype);
+				clazz.prototype.uper = uper.prototype;
+			}else{
+				clazz.prototype = {
+					uper:null
+				};
+			}
+			// constructor class
+			// initialize
+
+			clazz.prototype.constructor = clazz;
+			clazz.prototype.initialize = initialize;
+
+			for (var l in defaultKeys){
+				var keyName = defaultKeys[l];
+				defineProp(clazz.prototype,keyName,defaultKeyConfig);
+			}
+			//customize 
+			// attributes
+			// methods
+			// var extList = [];
+			// extList.push(methods);
+			// extList.push(attributes);
+			// for (var key in extList){
+			// 	var ext = extList[key];
+			// 	for (var k in ext){
+			// 		clazz.prototype[k] = ext[k];
+			// 	}
+			// }
+			for (var key in methods){
+				clazz.prototype[key] = methods[key];
+				defineProp(clazz.prototype,key,customizedKeyConfig)
+			}
+			for (var key in attributes){
+				clazz.prototype[key] = attributes[key];
+				defineProp(clazz.prototype,key,customizedKeyConfig)
+			}
+
+
+			return clazz;
+		}
+		classUtil = {
+			makeClass:makeClass,
+		}
+		_global.classUtil = classUtil
+
+	})(window)
+
+	var A = classUtil.makeClass({
+		className:"A",
+		initialize:function(arg1,arg2){
+			console.log('a constructor')
+			this.arg1 = arg1;
+			this.arg2 = arg2;
+		},
+		uper:null,
+		methods:{
+			a:function(){console.log('this is A.a')},
+			echo:function(){console.log(this.att1)},
+		},
+		attributes:{
+			att1:"att1",
+		},
+	})
+	var CC = classUtil.makeClass({className:"abc"});
+	var cc= new CC();
+	console.log('cc:',cc);
+	console.log(A.uper)
+	var a = new A(1,2);
+
+	console.log('a',a);
+	console.log("A");
+	console.dir(A);
+
+	var B = classUtil.makeClass({
+		className:"B",
+		initialize:function(arg1,arg2,arg3){
+			console.log('B constructor');
+			console.log(this);
+			console.log('B uper')
+			console.dir(this.uper);
+			this.uper.initialize.call(this,arg1,arg2);
+			this.att1 = arg3;
+		},
+		uper:A,
+		methods:{
+			b:function(){
+				console.log('this is B.b');
+				console.log('this refer to ',this,' and the class of this instance is ',this.__proto__);
+			},
+		},
+		attributes:{
+			att123:"att1",
+		},
+	})
+	b = new B(3,2,1);
+	console.log("B");
+	console.dir(B);
+	console.log('b',b);
+	b.a();
+	b.b();
+	b.echo();
+
+	for(var key in b){
+		console.log(key,b[key]);
+	}
+
+
+	var nameSpace = function(){
+		var atf = 1;
+		function factory($){
+			console.log('real wtf la ');
+			result = {
+				a:function(){
+					console.log("jquery is ",$);
+				}
+			}
+			window.myModule = result;
+			return result;
+		}
+		function support(factory){
+		    if ( typeof define === 'function' && define.amd ) {
+		        // AMD. Register as an anonymous module.
+		        define(['jquery'], factory);
+		    } else if (typeof exports === 'object') {
+		        // Node/CommonJS style for Browserify
+		        module.exports = factory;
+		    } else {
+		        // Browser globals
+		        factory(jQuery);
+		    }
+		}
+
+		support(factory);
+
+	}
+
+	nameSpace();
+	console.dir(nameSpace);
+	nameSpace = null;
+	myModule.a();
+
+	(function f(){ console.log('called 啦啦啦啦啊啦') }(1));
+
+
+
+
+	
+
+	</script>
+</head>
+<body>
+</body>
+</html>

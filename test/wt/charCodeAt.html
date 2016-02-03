@@ -1,0 +1,70 @@
+<script src = "js/jquery.js"></script>
+<div id = "a"></div>
+<script>
+	// var nullEnumList=["someFunc","key"];
+	// var a = function(){};
+	// a.prototype = {
+	// 	a:"a",
+	// 	someFunc:function(){},
+	// 	key:function(){
+	// 		console.log('wtf');
+	// 	}
+	// };
+
+	// function unEnumProperty(object,key){
+	// 	Object.defineProperty(object,key,{
+	// 		enumerable:false
+	// 	})
+	// }
+	// for (var key in nullEnumList){
+	// 	var name = nullEnumList[key];
+	// 	unEnumProperty(a.prototype,name);
+	// }
+
+	// var b = new a();
+	// b.wtf2 = "wtf2";
+	// console.log(b);
+	// b.key();
+	// for (var key in b){
+
+	// 	console.log(key,b.hasOwnProperty(key),b[key]);
+		
+	// }
+
+
+
+	// var arr = [];
+	// arr.a = "10";
+	// console.log(arr);
+	// for (var key in arr){
+	// 	console.log(key,arr[key]);
+	// }
+
+
+
+
+	var a = $;
+	console.log(a.ajaxSettings.accepts.json);
+	desc(a);
+	function desc(a,indent,max){
+		if (indent == null) indent = 0;
+		if (max == null) max = 10;
+		var flag = ("-".repeat(4)+" ").repeat(indent);
+		for (var key in a){
+			var item = a[key];
+			if (typeof item == "function"){
+				console.log(flag+"{",key,"} : ",item.constructor.name,"params",item.length)
+			}else if (typeof item == "object"){
+				console.log(flag+"{",key,"} : ",a.constructor.name)
+				if (indent < max ){
+					desc(item,indent+1,max);
+				}	
+			}else{
+				console.log(flag+"{",key,"} : ",item.constructor.name,"--",item)
+			}
+		}
+	}
+
+
+
+</script>

@@ -1,0 +1,166 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="author" content="sillyboy" />
+<script type="text/javascript" src = "js/jquery.js"></script>
+
+<link rel = "styleSheet" href ="css/floorplan_roll.css"></link>
+<script>
+$(function(){
+	var container = $("#a");
+	var TEMPLATE = '<div id = "{id}" idx = {idx} class = "foldContainer"><div class = "card fold black">{content}</div></div>'
+	var COUNT = 4;
+	for (var i =0;i<COUNT;i++){
+		var div = TEMPLATE.replace("{id}","a"+i).replace("{idx}",i).replace("{content}","");
+		container.append(div);
+	}
+	
+	var T = 3;
+	var CH = 600;
+	var P = 1200;
+	var Z = 400;
+	var H = 200;
+	
+	var D = 75;
+	var J = H*(P/(P-Z));
+
+	
+	var l = (Math.sin(D/180*Math.PI))*H;
+	var f = (P/(P+l));
+	var h = 200*Math.cos(D/180*Math.PI) * f;
+
+	var MAXH = J+(COUNT-1)*h;
+	console.log(MAXH,J);
+
+	var BASE = 0;
+	var GAP = -15;
+	var FIX = 18;
+	// test
+	if (MAXH > CH){
+		BASE = 0;
+		var less = MAXH-CH + T*2;
+		GAP = -less/(COUNT-3);
+		FIX = -GAP + T;
+	}else{
+		BASE = (CH-MAXH)/(COUNT+1);
+		var more = CH-MAXH - BASE *2;
+		GAP = more/(COUNT-1);
+		FIX = 0;
+
+		console.log("more",more,J,MAXH,h);
+
+	}
+	console.log(BASE,GAP,FIX)
+
+
+	var STEP = h + GAP;
+
+	$(".card").each(function(){
+		var card = $(this);
+		var idx = card.parent().attr("idx");
+		card.addClass("fold");
+		card.parent().css("bottom",idx*STEP+BASE);
+	})
+	var moving = false;
+
+	$(".card").mousemove(function(){
+		if (moving) return;
+		var card = $(this);
+		if (card.hasClass('unfold')) return;
+		moving = true;
+		var idx = card.parent().attr('idx') >> 0;
+		$(".card").each(function(){
+			var temp = $(this)
+			temp.parent()[0].style.zIndex = 0;
+			temp.removeClass("unfold");
+			temp.removeClass("fold");
+			var idx2 = temp.parent().attr('idx') >> 0;
+			if (idx2 < idx){
+				temp.addClass("fold");
+				temp.parent().css("bottom",BASE + idx2*STEP);
+			}else if (idx2 > idx){
+				temp.addClass("fold");
+				temp.parent().css("bottom",BASE + idx2*STEP -h + J + FIX*2);
+			}else{
+				temp.parent().css("bottom",BASE + idx2*STEP +FIX);
+				temp.addClass("unfold");
+			}
+		})
+		card.parent()[0].style.zIndex = 1;
+		setTimeout(function(){
+			moving = false;
+		},200)
+	})
+
+})
+</script>
+<title>sillyboy</title>
+</head>
+<body>
+	<div id = "a">
+		<!--
+		<div id = "a1" idx = 0 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a2" idx = 1 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a3" idx = 2 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a4" idx = 3 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a5" idx = 4 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a6" idx = 5 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a7" idx = 6 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a8" idx = 7 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a9" idx = 8 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a10" idx = 9 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a1" idx = 10 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a2" idx = 11 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a3" idx = 12 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a4" idx = 13 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a5" idx = 14 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a6" idx = 15 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a7" idx = 16 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a8" idx = 17 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		<div id = "a9" idx = 18 class = "foldContainer">
+			<div class = 'card fold black'></div>
+		</div>
+		<div id = "a10" idx = 19 class = "foldContainer">
+			<div class = 'card fold red'></div>
+		</div>
+		-->
+	
+	</div>
+</body>
+</html>

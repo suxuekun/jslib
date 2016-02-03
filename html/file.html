@@ -1,0 +1,35 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script type="text/javascript" src = "../js/jquery.csv-0.71.js"></script>
+	
+	<script type="text/javascript">
+	</script>
+</head>
+<body>
+	<input id="input_file" type="file" />
+	<img id="picture" alt="" width="512" />
+	<script>
+		var input_file = document.getElementById('input_file');
+		 
+		input_file.addEventListener('change', function (e) {
+		    var input_file = e.currentTarget;
+		    var file = input_file.files[0];
+			readText(file,function(err,csv){
+				var data = $.csv.toObjects(csv);
+				console.log(data);
+			})
+		});
+		function readText(file,callback){
+			var fr = new FileReader();
+			fr.onload = function (e) {
+				callback.call(fr,null,fr.result);
+			};
+			fr.readAsText(file);
+		}
+	</script>
+</body>
+</html>

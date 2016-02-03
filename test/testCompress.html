@@ -1,0 +1,126 @@
+<div id = "console">
+</div>
+<script>
+	var int2s = function(i,limit,bit){
+		var s = i.toString(bit);
+		var less = limit - s.length;
+		if (less > 0){
+
+			s = "0".repeat(less) + s;
+		}
+		return s;
+	}
+	var s2int = function(str,bit){
+		return parseInt(hex, bit);
+	}
+
+	var int2hex= function(i,limit){
+		var s = i.toString(16);
+		var less = limit - s.length;
+		if (less > 0){
+
+			s = "0".repeat(less) + s;
+		}
+		return s;
+	}
+	var hex2int = function(hex){
+		return parseInt(hex, 16);
+	}
+	var uncompress2 = function (hex,step){
+		var result = [];
+		for (var i = 0;i<hex.length;i+=step){
+			var sub = hex.substr(i,step);
+			var num = hex2int(sub);
+			var v = num % 0xffff;
+			var y = num>>32 % 0xffff;
+			var x = num >>64 % 0xffff;
+			result.push({x:x,y:y,value:v})
+		}
+	}
+	var uncompress = function(hex,step){
+
+		var list = []
+		for (var i = 0;i<hex.length;i+=step){
+			var sub = hex.substr(i,step);
+			var v = hex2int(sub);
+			list.push(v);
+		}
+		var result = [];
+
+		for (var i=0;i<list.length;i+=3){
+			var x = list[i];
+			var y = list[i+1];
+			var v = list[i+2];
+			result.push({x:x,y:y,value:v})
+		}
+		return result;
+	}
+	var compress = function(list){
+		var s = "";
+		for (var i=0;i<data.length;i++){
+			var item = data[i];
+			var x = item.x;
+			var y = item.y;
+			var v = item.value;
+			var p1 = int2hex(x,4);
+			var p2 = int2hex(y,4);
+			var p3 = int2hex(v,4);
+			s += p1+p2+p3;
+		}
+		return s;
+	}
+	var compress2 = function(list){
+		var s = "";
+		for (var i=0;i<data.length;i++){
+			var item = data[i];
+			var x = item.x;
+			var y = item.y;
+			var v = item.value;
+			var value = x<<32+y<<16+v;
+			var p = int2hex(value,12);
+			s += p
+		}
+		return s;
+	}
+
+	var data = [];
+	for (var i=0;i<100000*30;i++){
+		var x = Math.floor(Math.random()*4000);
+		var y = Math.floor(Math.random()*4000);
+		var v = Math.floor(Math.random()*60000);
+		data.push({x:x,y:y,value:v});
+	}
+
+	console.log(data);
+
+
+	var time1 = new Date();
+	var result = compress(data);
+	var time2 = new Date();
+	var back = uncompress(result,4);
+	var time3 = new Date();
+	// var back2 = uncompress2(result,12);
+	// var time4 = new Date();
+
+	// var result2 = compress2(back2);
+	// var time5 = new Date();
+
+	var timeStr1 = "compress: " + (time2.getTime()-time1.getTime());
+	var timeStr2 = "uncompress: " + (time3.getTime()-time2.getTime());
+	// var timeStr3 = "uncompress2: " + (time4.getTime()-time3.getTime());
+	// var timeStr4 = "compress2: " + (time5.getTime()-time4.getTime());
+
+	// console.log(timeStr1);
+	// console.log(timeStr2);
+	// console.log(back);
+
+	var div = document.getElementById("console");
+	div.innerHTML = 
+	timeStr1+"ms"+"</br>"
+	+timeStr2+"ms" + "</br>"
+	// +timeStr3+"ms" + "</br>"
+	// +timeStr4+"ms" + "</br>"
+	+ "list size:" + data.length +"</br>"
+	+ "string size:" +result.length ;
+
+</script>

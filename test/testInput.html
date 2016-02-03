@@ -1,0 +1,29 @@
+<html>
+<head>
+<script type="text/javascript" src = "js/jquery.js"></script>
+<script>
+var stdMac = function(str){
+	var mac = str.replace("(?i)[^a-fA-F0-9]", "");
+	console.log(mac.length);
+	if(mac.length!=12) return "";
+	var macParts = mac.match(/.{1,2}/g);
+	console.log(macParts);
+	mac = macParts.join(":");
+	console.log(mac);
+	return mac;
+}
+var phraseMac = function(e){
+	var str = $(e).val();
+	var mac = stdMac(str);
+	console.log(mac);
+	$(e).val(mac)
+}
+</script>
+</head>
+<body>
+<input id = "abc" type="text" onblur="phraseMac(this)">
+<script>
+
+</script>
+</body>
+</html>

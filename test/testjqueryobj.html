@@ -1,0 +1,20 @@
+<head>
+	<script src = "js/jquery.js"></script>
+</head>
+<body>
+	<div id = "a"></div>
+	<script>
+		$a = $("#a");
+		$a.prepend("<div id = 'b' style='width:100px;height:100px;background:red'></div>");
+		$b = $("#b");
+		$b.click(function(){
+			console.log('b')
+		})
+		console.log($b);
+		$b.remove();
+		console.log($b);
+		console.log($b[0]);
+
+
+	</script>
+</body>

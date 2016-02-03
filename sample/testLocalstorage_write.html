@@ -1,0 +1,64 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script>
+
+		var WARNING = 'storage usage = {s}K\nexceed local storage qouta \nwhen write locat value {k} = {v}';
+
+		function getLocalStorageSize(option){
+			var storageSize = JSON.stringify(localStorage).length;
+			if (option && option.unit){
+				switch(option.unit){
+					case "k":
+						storageSize = Math.round(storageSize/1024);
+						break;
+					case "m":
+						storageSize = Math.round(storageSize/1024/1024);
+						break;
+				}
+			}
+			
+			return storageSize;
+		}
+
+		function writeLocal(key,value){
+			var success = false;
+			try{
+				localStorage.setItem(key,value);
+				success = true;
+			}catch(e){
+				var s = getLocalStorageSize({unit:"k"});
+				console.warn(WARNING.replace(/\{k\}/g,key).replace(/\{v\}/g,value).replace(/\{s\}/g,s));
+				success = false;
+			}finally{
+				return success;
+			}
+		}
+		var key = "wtf";
+		var value = "I write wtf on key wtf";
+		localStorage[key] = value;
+
+		var n = 13000;
+		for (var i =0;i<n;i++){
+			var key = "wtf"+i;
+			var value = "m".repeat(400);
+			var s = writeLocal(key,value);
+			if (!s) break;
+		}
+		var storageSize = Math.floor(JSON.stringify(localStorage).length / 1024);
+		console.log(storageSize);
+		console.log(localStorage.length)
+		
+		document.write('used size:'+storageSize + "k" + "  " + storageSize/1024 + "m");
+
+		localStorage.clear();
+
+	</script>
+</head>
+<body>
+</body>
+</html>

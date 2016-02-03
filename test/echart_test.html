@@ -1,0 +1,90 @@
+<html>
+<head>
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/echarts-all.js"></script>
+	<style>
+		#a{
+			width:400px;
+			height:200px;
+		}
+	</style>
+</head>
+<body>
+	<div id = "a"></div>
+	<script>
+		$(function(){
+			var option = {
+		    title : {
+		    	show:false,
+		        text: '某楼盘销售情况',
+		        subtext: '纯属虚构'
+		    },
+		    tooltip : {
+		        trigger: 'axis'
+		    },
+		    legend: {
+		    	show:false,
+		        data:['1','2','3']
+		    },
+		    grid:{
+		    	x:40,
+		    	y:40,
+		    	x2:20,
+		    	y2:20,
+		    },
+		    toolbox: {
+
+		        show : false,
+		        feature : {
+		            mark : {show: true},
+		            dataView : {show: true, readOnly: false},
+		            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+		            restore : {show: true},
+		            saveAsImage : {show: true}
+		        }
+		    },
+		    calculable : true,
+		    xAxis : [
+		        {
+		            type : 'category',
+		            boundaryGap : false,
+		            data : ['周一','周二','周三','周四','周五','周六','周日']
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value'
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'1',
+		            type:'line',
+		            smooth:true,
+		            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		            data:[10, 12, 21, 54, 260, 830, 710]
+		        },
+		        {
+		            name:'2',
+		            type:'line',
+		            smooth:true,
+		            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		            data:[30, 182, 434, 791, 390, 30, 10]
+		        },
+		        {
+		            name:'3',
+		            type:'line',
+		            smooth:true,
+		            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+		            data:[1320, 1132, 601, 234, 120, 90, 20]
+		        }
+		    ]
+		};
+			var myChart = echarts.init(document.getElementById("a"));
+
+			myChart.setOption(option);
+
+		})
+	</script>
+</body>
+</html>

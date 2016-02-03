@@ -1,0 +1,59 @@
+<html>
+<head>
+	
+	<script  type="text/javascript" src = "../js/jquery.js"></script>
+  <script  type="text/javascript" src = "../js/utilFunc.js"></script>
+	<style>
+
+	</style>
+</head>
+<body>
+	<div style ="border:red 1px solid" >
+		<canvas id = "testCanvas" width =500 height = 500></canvas>
+    <input id = "out" type = "text"/>
+	</div>
+
+<script>
+ ca = document.getElementById("testCanvas");
+    co = ca.getContext('2d');
+
+    //desc(co,0,1);
+    
+    co.beginPath();
+        co.fillStyle = 'red';
+        co.moveTo(50,50);
+        co.quadraticCurveTo(150,25,200,150);
+        co.lineTo(100,245);
+        co.lineTo(50,125);
+        co.lineTo(100,50);
+    co.closePath();
+    co.stroke();
+    co.fill();
+    var p = co.beginPath();
+        co.fillStyle = 'red';
+        co.moveTo(150,150);
+        co.quadraticCurveTo(250,125,300,250);
+        co.lineTo(200,345);
+        co.lineTo(150,225);
+        co.lineTo(200,150);
+    var p2 = co.closePath();
+    console.log(p,p2)
+    co.stroke();
+    co.fill();
+    
+    ca.onmousemove = function (e)
+    {
+        var ca = e.target;
+        var co = ca.getContext('2d');
+        var coords = [e.layerX,e.layerY]
+        
+        document.getElementById("out").value = 'Is point in path: ' +
+            (co.isPointInPath(coords[0], coords[1]) ? 'YES' : 'NO');
+    }
+
+
+</script>
+
+
+</body>
+</html>

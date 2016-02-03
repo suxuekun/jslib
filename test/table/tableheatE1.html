@@ -1,0 +1,75 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.custom.js"></script>
+	<script type="text/javascript" src = "js/wilasCanvasLite.js"></script>
+	<script type="text/javascript" src = "js/heatmap.js"></script>
+	<script type="text/javascript" src = "js/TableHeatmapLite.js"></script>
+	<style>
+		#myCanvas{
+			position:absolute;
+		}
+		#wrapper{
+			height:500px;
+		}
+	</style>
+	<script>
+		$(function(){
+			var container = document.getElementById('th');
+			var th = TableHeatmapLite.init(container);
+
+			var ti = 10;
+			var tj = 30;
+			var data = {
+
+			}
+			data.labelx = [];
+			data.labely = [];
+			data.data=[];
+			for (var j=0;j<tj;j++){
+				data.labelx.push("labelx"+j);
+			}
+			for (var i=0;i<ti;i++){
+				data.labely.push("labely"+i);
+			}
+			for (var i=0;i<ti;i++){
+				var row = [];
+				for (var j=0;j<tj;j++){
+					var cell = (tj-j)*100+ (ti/2 - Math.abs(i-ti/2))*100;
+					row.push(cell);
+				}
+				data.data.push(row);
+			}
+
+
+			// var data = {
+			// 	labelx:["a1","a2","a3","verylong"],
+			// 	labely:["10","20","100","200","1000"],
+			// 	data:[
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 		[10,10,10,10],
+			// 	]
+			// }
+			th.setOption({
+				cellSize:25,
+			})
+			th.setData(data);
+			$(container).mousemove(function(e){
+				console.log(th.info.i,th.info.j,th.info.data);
+			})
+		})
+	</script>
+</head>
+<body>
+	<div id ="wrapper">
+		<div id = 'th'></div>
+	</div>
+
+</body>
+</html>

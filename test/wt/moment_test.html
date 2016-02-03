@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+		<title>test</title>
+		<script src = "js/moment.js"></script>
+		<script>
+		var m = moment();
+		var m2 = moment(m);
+		m2.subtract(12,"hours");
+
+		console.log(m.date(),m2.date(),m.startOf("day").diff(m2.startOf("day"),"days"));
+		</script>
+	</head>
+<body>
+</body>
+</html>

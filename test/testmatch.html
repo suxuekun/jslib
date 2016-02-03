@@ -1,0 +1,75 @@
+<html>
+<head>
+	<script src = "js/jquery.js"></script>
+	<script src = "js/jquery.mousewheel.js"></script>
+	<script src = "js/jquery.panzoom.js"></script>
+
+	<style>
+		#test img{
+			position:absolute;
+			opacity: 0.4;
+		}
+		#test section{
+
+		}
+    .panzoom{
+      width:0;
+      height:0;
+    }
+	</style>
+	<script>
+
+	</script>
+</head>
+<body>
+<div>
+  <input id ="gen" type = 'button' value = 'generate'/>
+  <div id = 'fo'></div>
+</div>
+<div id = 'test'>
+	<img id ="img" src = "img/60011.png"/><!-- map we use-->
+	<section id="focal">
+      <div class="parent" style="overflow: hidden; position: relative;">
+        <div class="panzoom">
+          <img  src = "img/torB1.jpg"/><!-- rackus map -->
+        </div>
+      </div>
+      <script>
+        (function() {
+          var $section = $('#focal');
+          var $panzoom = $section.find('.panzoom').panzoom({
+          	maxScale: 10,
+          	minScale: 0.05,
+          	increment: 0.01,
+          });
+          $panzoom.parent().on('mousewheel.focal', function( e ) {
+            e.preventDefault();
+            var delta = e.delta || e.originalEvent.wheelDelta;
+            var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+            $panzoom.panzoom('zoom', zoomOut, {
+              increment: 0.01,
+              animate: false,
+              focal: e
+            });
+          });
+          $img = $("#img");
+          $panzoomparent = $(".parent");
+    		  $panzoomparent.height($img.height());
+          $panzoomparent.width($img.width());
+          $gen = $("#gen");
+          $fo = $("#fo");
+          $gen.click(function(){
+            console.log();
+            var trans = $panzoom.css('transform');
+            if trans
+            //var trans = $panzoom.css('transparent');
+          })
+
+
+        })();
+      </script>
+    </section>
+</div>
+</body>
+</html>
+

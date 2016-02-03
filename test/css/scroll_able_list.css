@@ -1,0 +1,31 @@
+.search{
+	font-size:16px;
+	padding:5px;
+	margin:0 auto;
+	width :100%;
+	height:32px;
+}
+.list{
+	overflow-y: scroll;
+}
+.list_item:hover{
+	background-color: #459CFF;
+}
+.item_select{
+	background-color: #247CFF;
+}
+.item_hidden{
+	display:none;
+}
+.list_item{
+	margin:3px auto;
+	padding:5px;
+	border-top:solid 1px #0076a3;
+
+	-moz-user-select: text;
+	-khtml-user-select: text;
+	-webkit-user-select: text ;
+	-ms-user-select: text;
+	user-select: text;
+	cursor: default;
+}

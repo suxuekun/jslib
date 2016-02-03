@@ -1,0 +1,645 @@
+<body>
+	<div id = "d" style="width:1000px;height:500px">
+	</div>
+</body>
+<script>
+// (function(_global){
+// 	var sillypackage = function(){
+// 	};
+// 	var createNode = function(parent,node){
+// 		if (parent[node] == null){
+// 			parent[node] = {}
+// 		}
+// 		return parent[node];
+// 	}
+// 	var deepExtend = function(target,source){
+// 		for (var key in source){
+// 			var s = source[key];
+// 			var t = target[key];
+// 			if (!t) t = {};
+// 			if (s && typeof(s) == 'object'){
+// 				deepExtend(t,s);
+// 			}else{
+// 				t = source[key];
+// 			}
+// 			target[key] = t;
+// 		}
+// 	}
+// 	var createHierarchy = function(name){
+// 		if (typeof name != 'string' || name.length ==0) return;
+// 		var hierarchy = name.split(".");
+// 		var parent = _global;
+// 		for (var key in hierarchy){
+// 			var node = hierarchy[key];
+// 			parent = createNode(parent, node);
+// 		}
+// 		return parent;
+// 	}
+// 	var p = {
+// 			createHierarchy:createHierarchy,
+// 			deepExtend:deepExtend,
+
+// 	}
+// 	sillypackage.prototype = p;
+// 	_global.sillypackage = new sillypackage();
+// })(window);
+
+// (function(_global){
+// 	_self = sillypackage.createHierarchy("com.techstudio.suxuekun")
+// 	if (!_self.prototype){
+// 		_self.prototype = {}
+// 	}
+// 	var p = {
+// 		wtf:"wtf",
+// 		d:{
+// 			wtf:"wtf",
+// 			a:{
+// 				t:null,
+// 			}
+// 		}
+// 	}
+// 	var p2 = {
+// 		wtf2:"wtf",
+// 		d:{
+// 			wtf2:"wtf",
+// 			a2:{
+// 				t:null,
+// 			}
+// 		},
+// 		d2:{
+// 			wtf:"wtf",
+// 			a:{
+// 				t:null,
+// 			}
+// 		}
+// 	}
+// 	sillypackage.deepExtend(_self,p);
+// 	sillypackage.deepExtend(_self,p2);
+// 	console.log(com.techstudio.suxuekun)
+// 	console.log(com.techstudio.suxuekun.wtf)
+// 	var A = function(){
+
+// 	}
+// 	A.prototype = {
+// 		a:"a"
+// 	}
+// 	b = new A();
+
+// 	console.log("b:",b);
+// })(window);
+
+//-- fix animation;
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+
+//--wilasCanvas
+(function(_global){
+
+	// utils--
+	function sortByKey(array, key) {
+	    return array.sort(function(a, b) {
+	        var x = a[key];
+	        var y = b[key];
+
+	        if (typeof x == "string")
+	        {
+	            x = x.toLowerCase(); 
+	            y = y.toLowerCase();
+	        }
+
+	        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+	    });
+	}
+
+	var deepExtend = function(target, source) {
+		for ( var key in source) {
+			var s = source[key];
+			var t = target[key];
+			if (s && typeof (s) == 'object') {// object or array
+				if (!t) {
+					t = s.constructor();
+				}
+				deepExtend(t, s);
+			} else {
+				t = source[key];// function or normal attr
+			}
+			target[key] = t;
+		}
+	}
+	var copyRect = function(rect){
+		var copy = []
+		for (var key in rect){
+			var item = rect[key]
+			copy.push(item);
+		}
+		return copy;
+	}
+
+	var combineRect = function(r1,r2){
+		var x=r1[0] < r2[0] ? r1[0]:r2[0];
+		var y=r1[1] < r2[1] ? r1[1]:r2[1];
+		var x2=r1[2] > r2[2] ? r1[2]:r2[2];
+		var y2=r1[3] > r2[3] ? r1[3]:r2[3];
+		return [x,y,x2,y2];
+	}
+	var diffRect = function(r1,r2){
+		var x=r1[0] > r2[0] ? r1[0]:r2[0];
+		var y=r1[1] > r2[1] ? r1[1]:r2[1];
+		var x2=r1[2] < r2[2] ? r1[2]:r2[2];
+		var y2=r1[3] < r2[3] ? r1[3]:r2[3];
+		return [x,y,x2,y2];
+	}
+	var hitTest = function(pos,rect){
+		return pos.x >=rect[0] && pos.x<=rect[2] && pos.y>=rect[1] && pos.y <=rect[3];
+	}
+	var hitTestRect = function(r1,r2){
+		return !isZeroRect(diffRect(r1,r2));
+	}
+
+	var isZeroRect = function(rect){
+		return rect == null || (rect[0] == 0 && rect[1] == 0 && rect[2] == 0 && rect[3] ==0) || rect[0] == rect[1] == rect[2] == rect[3];
+	}
+
+	var MOUSE = "mouse";
+	var ACTIONS = ["move","over","out","down","up"];
+	var MOUSEACTIONS = ["click"];
+	for (var key in ACTIONS){
+		MOUSEACTIONS.push(MOUSE+ACTIONS[key]);
+	}
+
+	//---- animation
+	var Animation = function(){
+		var __init = function(){
+			this.heartBeat = null;
+			this.list = [];
+			this.requestAnimationFrame = window.requestAnimationFrame;
+			this.cancelAnimationFrame = window.cancelAnimationFrame;
+			this.loop = function(){
+				var _self = this;
+				this.heartBeat = window.requestAnimationFrame(function(){
+					_self.loop.call(_self);
+					for (var key in _self.list){
+						movie = _self.list[key];
+						movie.play();
+					}
+				})
+			}
+		}
+		__init.call(this);
+	}
+	Animation.prototype = {
+		start:function(){
+			this.loop();
+		},
+		stop:function(){
+			if (this.heartBeat){
+				cancelAnimationFrame(this.heartBeat);
+			}
+		},
+		register:function(movie){
+			if (movie == null) return;
+			var index = this.list.indexOf(movie);
+			if (index == -1){
+				this.list.push(movie);
+			}
+		},
+		unregister:function(movie){
+			var index = this.list.indexOf(movie);
+			if (index > -1){
+				this.list.splice(index,1);
+			}
+		}
+	}
+
+	//---- layer
+	var Layer = function(id,option){
+		var __init = function(){
+			this.option = option;
+			if (this.option){
+				this.zIndex = option.zIndex || 0;
+			}else{
+				this.zIndex = 0;
+			}
+			this.canvas = document.createElement("canvas");
+			this.canvas.setAttribute("id", id);
+			
+			this.changed = true;
+			this.children = [];
+			this.canvas.style.zIndex = this.zIndex;
+			this.ctx = this.canvas.getContext('2d');
+		}
+		__init.call(this);
+	}
+	Layer.prototype = {
+		getCanvas:function(){
+			return this.canvas;
+		},
+		getContext:function(){
+			return this.ctx;
+		},
+		setZIndex:function(z){
+			this.zIndex = z;
+			this.canvas.style.zIndex = this.zIndex;
+		},
+		getRect:function(){
+			return [0,0,this.canvas.width,this.canvas.height];
+		},
+		isChanged:function(){
+			return this.changed;
+		},
+		play:function(){
+			this.redraw();
+		},
+		clear:function(rect){
+
+			this.changed = false;
+			if (rect == null){
+				rect = (0,0,this.canvas.width,this.canvas.height);
+			}else{
+				rect = diffRect(rect,this.getRect());
+			}
+			if (!isZeroRect(rect)){
+				this.ctx.clearRect.apply(this.ctx,rect);
+			}
+			if (this.option && this.option.clear){
+				if (this.option.clearArgs){
+					this.option.clear.apply(this,this.option.clearArgs);
+				}else{
+					this.option.clear.call(this);
+				}
+			}
+		},
+		update:function(){
+			this.changed = true;
+		},
+		redraw:function(){
+			var rect = [0,0,0,0];
+			for(var childKey in this.children){
+				var child = this.children[childKey];
+				if (child.isChanged()){
+					var newRect = child.getPreRect();
+					rect = combineRect(rect,newRect);
+				}
+			}
+			this.clear(rect);
+			for(var childKey in this.children){
+				var child = this.children[childKey];
+				child.redraw();
+			}
+		
+		},
+		resize:function(width,height){
+			this.canvas.width = width;
+			this.canvas.height = height;
+			this.update();
+		},
+		addChild:function(child,done){
+			if (this.children.indexOf(child) > -1 ) return;
+			this.children.push(child);
+			if (!done){
+				child.setParent(this,true);
+			}
+			this._sortChild();
+			this.update();
+		},
+		removeChild:function(child,done){
+			this.children.push(child);
+			var index = this.children.indexOf(child)
+			if (index > -1){
+				this.children.splice(index,1);
+			}
+			if (!done){
+				child.setParent(null,true);
+			}
+			update();
+			
+		},
+		_sortChild:function(){
+			sortByKey(this.children,"z");
+		},
+		setParent:function(parent){
+			if (this.parent == parent) return;
+	
+			if (this.parent){
+				for (var nameKey in MOUSEACTIONS){
+					var name = MOUSEACTIONS[nameKey];
+
+					this.parent.removeEventListener(name,this.mouseFunc);
+				}
+				this.parent.removeChild(this.getCanvas());
+			}
+			this.parent = parent;
+			if (this.parent){
+				for (var nameKey in MOUSEACTIONS){
+					var name = MOUSEACTIONS[nameKey];
+
+					var _self = this;
+					var func = function(e){
+						_self.on(e);
+					}
+					this.mouseFunc = func;
+					this.parent.addEventListener(name,func);
+				}
+				this.parent.appendChild(this.getCanvas());
+				this.resize(this.parent.clientWidth,this.parent.clientHeight);
+			}
+			
+
+		},
+		on:function(e){
+			if (this.parent){
+				var tx = e.pageX;
+				var ty = e.pageY;
+				var offset = {
+					left:this.parent.offsetLeft + document.body.scrollLeft,
+					top:this.parent.offsetTop + document.body.scrollTop,
+				}
+				var x = tx-offset.left;
+				var y = ty-offset.top;
+				var transform = this.parent.style.transform;
+				if (transform && transform!= "none"){
+					var matrix = transform.match(/-?[\d\.]+/g);
+					var a = matrix[0];
+					var d = matrix[3];
+					x = Math.floor(x/a);
+					y = Math.floor(y/d);
+				}
+			}
+			var pos={x:x,y:y};
+			for (var key in this.children){
+				var child = this.children[key];
+				child.on(e,pos);
+			}
+			if (this.option && this.option.on){
+				this.option.on(e,pos);
+			}
+		}
+	}
+	//------------
+
+	var Shape = function(option){
+		var __init = function(option){
+			this.rect = [0,0,0,0];
+			this.preRect = [0,0,0,0];
+			this.changed = false;
+			this.isMouseOver = false;
+			this.anime = null;
+			this.setOption(option);
+
+		}
+		__init.call(this);
+	}
+	Shape.prototype = {
+		setOption:function(option){
+			this.option = option;
+			if (this.option){
+				this.x =this.option.x || 0;
+				this.y =this.option.y || 0;
+			}else{
+				this.x = 0;
+				this.y = 0;
+			}
+		},
+		draw:function(){
+			if (this.anime == null){
+				this.changed = false;
+			}else{
+			
+			}
+			this.preRect = copyRect(this.rect);
+			//overwrite
+		},
+		_resetRect:function(){
+			//overwrite
+		},
+		redraw:function(){
+			this.draw();
+		},
+		getRect:function(){
+			return this.rect;
+		},
+		getPreRect:function(){
+			return this.preRect;
+		},
+		setX:function(x){
+			if (x != this.x){
+				this.changed = true;
+				this.x = x;
+				this._resetRect();
+			}
+		},
+		setY:function(y){
+			if (y != this.y){
+				this.changed = true;
+				this.y = y;
+				this._resetRect();
+			}
+		},
+		setPos:function(x,y){
+			if (x != this.x || y != this.y){
+				this.changed = true;
+				this.x = x;
+				this.y = y;
+				this._resetRect();
+			}
+		},
+		isChanged:function(){
+			return this.changed;
+		},
+		setParent:function(parent,done){
+			if (!done){
+				if (this.parent){
+					this.parent.removeChild(this,true);
+				}
+			}
+			this.parent = parent;
+			if (!done){
+				if (this.parent){
+					this.parent.addChild(this,true);
+				}
+			}
+		},
+		getOption:function(){
+			return this.option;
+		},
+		on:function(e,pos){
+			if (hitTest(pos,this.rect)){
+				this.isMouseOver = true;
+				if (this.option && this.option.highlight){
+					this.startAnime(this.option.highlight);
+				}
+			}else{
+				if (this.option && this.option.highlight){
+					this.stopAnime();
+				}
+				this.isMouseOver = false;
+			}
+			if (this.option && this.option[e.type]){
+				var func = this.option[e.type];
+				func.apply(this,[e,pos]);
+			}
+		},
+		isOver:function(){
+			return this.isMouseOver;
+		},
+		startAnime:function(anime){
+			this.anime = anime;
+
+			this.redraw();
+		},
+		stopAnime:function(){
+			this.anime = null;
+		}
+	}
+
+	//---------
+	var Circle = function(option){
+		var RADIUS = 10;
+		var COLOR = "red";
+		var __init = function(){
+			if (this.option){
+				this.r = option.r || RADIUS;
+				this.style = option.color || option.style || COLOR;
+			}else{
+				this.r = RADIUS;
+				this.style = COLOR;
+			}
+			this._resetRect();
+		}
+		Shape.call(this,option);
+		__init.call(this);
+	}
+	Circle.prototype = {};
+	deepExtend(Circle.prototype,Shape.prototype);
+
+	circle_proto_ext = {
+		draw:function(){
+			Shape.prototype.draw.call(this)
+			var ctx = this.parent.getContext()
+			ctx.save();
+			ctx.beginPath();
+
+			ctx.arc(this.x,this.y,this.r,0,2*Math.PI,false)
+			ctx.fillStyle = this.style;
+			ctx.fill();
+			ctx.restore();
+		},
+		setR:function(r){
+			if (this.r != r){
+				this.changed = true;
+				this.r = r;
+				this._resetRect();
+			}
+		},
+		setXYR:function(x,y,r){
+			if (this.r != r || this.x!=x || this.y != y){
+				this.changed = true;
+				this.x = x;
+				this.y = y;
+				this.r = r;
+				this._resetRect();
+			}
+		},
+		_resetRect:function(){
+			this.rect[0] = this.x-this.r;
+			this.rect[1] = this.y-this.r;
+			this.rect[2] = this.x+this.r;
+			this.rect[3] = this.y+this.r;
+		},
+	}
+	deepExtend(Circle.prototype,circle_proto_ext);
+
+	//------
+	wilasCanvasLite = {
+		Layer:Layer,
+		Shape:Shape,
+		Circle:Circle,
+		Animation:Animation
+	}
+	_global.wilasCanvasLite = wilasCanvasLite;
+	
+})(window);
+
+
+	var layer = new wilasCanvasLite.Layer("a");
+	console.log(layer);
+	layer.setZIndex(3);
+	console.log(layer.changed);
+	var wrapper = document.getElementById("d")
+	//wrapper.appendChild(layer.getCanvas());
+	layer.setParent(wrapper);
+	var circle = new wilasCanvasLite.Circle();
+	circle.setXYR(300,300,20);
+
+	layer.addChild(circle);
+	layer.redraw();
+	console.log(layer.isChanged());
+
+
+
+	var anime = new wilasCanvasLite.Animation();
+
+	anime.start();
+	anime.register(layer);
+	circleJump = {
+		count:0,
+		length:0,
+		step:1,
+		max:100,
+		min:0,
+		shape:circle,
+		play:function(){
+			this.count++;
+			this.length+=this.step;
+			if(this.length >this.max || this.length < this.min){
+				this.step = -this.step;
+			}
+			circle.setY(circle.y+this.step);
+		}
+	}
+	anime.register(circleJump);
+
+	// console.log(circle);
+	// console.log('--')
+	// circle.draw();
+
+	// console.log('re--')
+	// circle.setX(0);
+	// circle.setY(1);
+	// console.log(circle.isChanged());
+	// circle.redraw();
+	// console.log(circle.isChanged());
+
+
+	// console.log("---")
+	// var shape = new wilasCanvasLite.Shape();
+	// shape.draw();
+	// shape.redraw();
+
+
+
+
+
+</script>

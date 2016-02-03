@@ -1,0 +1,35 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/jquery.dataTables.js"></script>
+</head>
+<body>
+	<table id= "myt" class = "table table-striped table-bordered">
+		<thead>
+			<th></th>
+			<th>ab</th>
+			<th>cd</th>
+			<th>ef</th>
+
+		</thead>
+	</table>
+	<script>
+
+	$("#myt").dataTable({
+		"aoColumns": [{   "sTitle": "<input type='checkbox' id='selectAll'></input>"}],
+ data: [
+        ["Tiger Nixon", "System Architect", "$3,120", "Edinburgh" ],
+        [ "Garrett Winters", "Director", "$5,300", "Edinburgh" ]
+    ]
+
+	});
+	$("#selectAll").change(function(e){
+		console.log($(this).attr("selected"));
+	})
+
+	</script>
+
+</body>
+</html>

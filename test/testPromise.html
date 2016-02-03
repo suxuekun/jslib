@@ -1,0 +1,165 @@
+<script>
+var PASS = true;
+var FAIL = false;
+
+var dos = [];
+var results = {
+	a:true,
+	b:true,
+	c:false,
+	d:false,
+	e:true,
+	f:false,
+	g:false,
+
+}
+
+function T2(name){
+	this.name = name;
+	this.l=null;
+	this.r=null;
+}
+T2.prototype.left = function(tree){
+	this.l = tree;
+}
+T2.prototype.right = function(tree){
+	this.r = tree;
+}
+T2.protptype.promiseTree = function(){
+	if ()
+	getPromise(this.name).then(l.promiseTree,right.promiseTree);
+}
+
+var getResultAlert = function(name){
+	return function(){
+		console.log(name)
+		alert(name);
+	}
+}
+
+var A = new T2('a');
+var B = new T2('b');
+var C = new T2('c');
+var D = new T2('d');
+var E = new T2('e');
+var F = new T2('f');
+var G = new T2('g');
+A.left = B;
+A.right = C;
+B.left=D;
+B.right =E;
+C.left=F;
+C.right=G;
+D.left = getResultAlert(0);
+D.right = getResultAlert(1);
+E.left = getResultAlert(2);
+E.right = getResultAlert(3);
+F.left = getResultAlert(4);
+F.right = getResultAlert(5);
+G.left = getResultAlert(6);
+G.right = getResultAlert(7);
+
+var getDo = function(name){
+	return function(){
+		alert(name);
+	}
+}
+for (var i=0;i<7;i++){
+	dos.push(getDo("name"+i,results[i]))
+}
+
+var getPromise = function(name,result){
+	console.log(name,result)
+	return new Promise(function(resolve,reject){
+		if(result){
+			resolve(name);
+		}else{
+			reject(name);
+		}
+	});
+}
+
+
+
+function getTree(key,child0,child1){
+	console.log(key);
+	return function(){
+		var l;
+		var r;
+		if (child0){
+			l = getTree[child0];
+		}
+		if (child1){
+			r = getTree([child1]);
+		}
+		if (l || r){
+			getPromise(key,results[key]).then(l,r)
+		}else{
+
+		}
+		
+	}
+}
+
+function treeB(value){
+	console.log(value);
+	getPromise('b',results['b']).then(treeD,treeE);
+}
+function treeC(value){
+	console.log(value);
+	getPromise('c',results['c']).then(treeF,treeG);
+}
+function treeD(value){
+	console.log(value);
+	getPromise('d',results['d']).then(getResultAlert(0),getResultAlert(1));
+}
+function treeE(value){
+	console.log(value);
+	getPromise('e',results['e']).then(getResultAlert(2),getResultAlert(3));
+}
+function treeF(value){
+	console.log(value);
+	getPromise('f',results['f']).then(getResultAlert(4),getResultAlert(5));
+}
+function treeG(value){
+	console.log(value);
+	getPromise('g',results['g']).then(getResultAlert(6),getResultAlert(7));
+}
+//getPromise('a',results['a']).then(treeB,treeC);
+ // getTree('a',
+ // 	getTree('b',
+ // 		getTree('d',getResultAlert(0),getResultAlert(1)),
+ // 		getTree('e',getResultAlert(2),getResultAlert(3))),
+ // 	getTree('c',
+ // 		getTree('f',getResultAlert(4),getResultAlert(5)),
+ // 		getTree('g',getResultAlert(6),getResultAlert(7)))
+ // );
+// promises['a'].then(
+// 	promises['b'].then(
+// 		promises['d'].then(
+// 			getResultAlert(0),
+// 			getResultAlert(1)
+// 			),
+// 		promises['e'].then(
+// 			getResultAlert(2),
+// 			getResultAlert(3)
+// 			)
+// 		),
+// 	promises['c'].then(
+// 		promises['f'].then(
+// 			getResultAlert(4),
+// 			getResultAlert(5)
+// 			),
+// 		promises['g'].then(
+// 			getResultAlert(6),
+// 			getResultAlert(7)
+// 			)
+// 		)
+// 	)
+
+
+
+
+
+
+</script>
