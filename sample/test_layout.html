@@ -1,0 +1,96 @@
+<html>
+<head>
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script>
+		$(function(){
+			var a = $("#a");
+			var b = $("#b");
+			var b0=b[0];
+			var style = b[0].style;
+			console.log(b.width(),b.innerWidth(),b.outerWidth());
+			console.log(b0);
+			console.log(b0.width,b0.style.marginLeft);
+			console.log(b0.style.paddingLeft);
+			console.log(b0.scrollWidth,b0.offsetWidth);
+
+		})
+		
+	</script>
+	<style>
+		@keyframes bgcolor {
+
+		    50% {width:90%;height:90%;}
+		   
+		}
+		.widget-container{
+			width:500px;
+			height:300px;
+		}
+		.widget{
+			box-sizing: border-box;
+			float:left;
+			width:50%;
+			height:50%;
+		}
+		.widget-drag{
+			background: yellow
+		}
+		.widget-anime:hover{
+			animation-name: bgcolor;
+    		animation-duration: 1s;
+    		animation-iteration-count: infinite;
+		}
+		.widget-inner{
+			box-sizing:inherit;
+		}
+		.spacing{
+			padding:10px;
+		}
+		.spacing-l{
+			padding:15px;
+		}
+		.spacing-null{
+			padding:0px;
+		}
+		.spacing-s{
+			padding:3px;
+		}
+		.spacing-m{
+			padding:5px;
+		}
+
+		.widget-container.spacing .widget{
+			padding:inherit;
+		}
+		.border{
+			border:1px solid blue;
+		}
+		.react-border{
+			border:3px solid rgba(0,0,0,0) !important;
+		}
+		.react-border:hover{
+			border:3px solid red !important;
+		}
+
+		.c{
+			width:100%;
+			height:100%;
+			margin: auto;
+			
+			word-break: break-all;
+			word-wrap: break-word;
+		}
+	</style>
+</head>
+<body>
+	<div class = "widget-container spacing spacing-s border">
+		<div class ="widget"><div class='widget-drag widget-anime c widget-inner react-border'></div>
+		</div>
+		<div class ="widget"><div class='c widget-inner react-border'>abcccccccdafdsafdafdfdsafdsafdasfdsaf的萨福大厦发生地方撒的发生sadfdsaasfasfs</div>
+		</div>
+	</div>
+
+</body>
+</html>

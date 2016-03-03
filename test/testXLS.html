@@ -1,0 +1,55 @@
+ <head>
+  <script type="text/javascript" src = "js/jquery.js"></script>  
+  <script type="text/javascript" src = "js/FileSaver.js"></script>  
+  <script type="text/javascript" src = "js/jszip.js"></script>  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">   
+  <title>  
+  </title>  
+  <script>  
+    // function clickDownload(aLink)  
+    // {  
+    //      var str = "1,请啊分,2\na,b,c";  
+    //      str =  encodeURIComponent(str); 
+    //      console.log(str); 
+    //      aLink.href = "data:text/csv;charset=utf-8,"+str;  
+         
+    // }  
+    function getBase64Image(img) {
+      // Create an empty canvas element
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // Copy the image contents to the canvas
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      // Get the data-URL formatted image
+      // Firefox supports PNG and JPEG. You could check img.src to
+      // guess the original format, but be aware the using "image/jpg"
+      // will re-encode the image.
+      var dataURL = canvas.toDataURL("image/png");
+
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    }
+    function clickthis(){
+      var zip = new JSZip();
+      zip.file("Hello.txt", "Hello World\n");
+      zip.file("csvtest.csv", "1,2,3\n4,5,6");
+
+      var testImg = $("#testimg");
+      console.log(testImg[0].innerHTML);
+      zip.file("test.png",testImg[0].innerHTML)
+      
+      var content = zip.generate({type:"blob"});
+      saveAs(content, "example.zip");
+
+    }
+
+  </script>   
+  </head>  
+  <body>
+    <image id = "testimg" src="img/60011.png"></image>
+    <a id="test" onclick="clickthis()" href="#">download</a>      
+  </body>  
+</html>  

@@ -1,0 +1,29 @@
+<script>
+console.log(new Date().getTime());
+
+console.log(new Date(1442836980000))
+console.log(new Date(1442969880000));
+
+console.log(new Date(1442836980000))
+console.log(new Date(1442937600000));
+
+console.log(new Date(1447055592));
+
+console.log(typeof([]))
+console.log(typeof({}))
+console.log(typeof(null))
+console.log(typeof(undefined))
+console.log(typeof(""))
+
+	var getTimeStampFromObjectID = function (objectId) {
+		return parseInt(objectId.substring(0, 8), 16) * 1000;
+	};
+	var getDateFromObjectID = function(objectId){
+		return new Date(getTimeStampFromObjectID(objectId));
+	}
+		
+console.log(getTimeStampFromObjectID("564063138fb8a5a18d356df7"));
+console.log(getDateFromObjectID("564063138fb8a5a18d356df7"));
+
+
+</script>

@@ -1,0 +1,395 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+	<script src = "js/jquery.js"></script>
+	<script src = "js/echarts-all-dev.js"></script>
+</head>
+<body>
+	<style>
+		.chart{
+			width:100%;
+			height:200;
+			margin:auto;
+		}
+		.chartall{
+			width:100%;
+			height:240;
+			margin:auto;
+		}
+	</style>
+	<div id ="compare_chart">
+		<div id="chart1" class="chartall"></div>
+		<div id="chart2" class="chart"></div>
+	</div>
+	<script>
+
+var chart1 = echarts.init($("#chart1")[0]);
+var chart2 = echarts.init($("#chart2")[0]);
+
+var data1 = [120, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210];
+var data2 = [22000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000];
+
+var getFormatter = function(str){
+	return function(value){
+		return str.replace(/{value}/gi,value);
+	}
+}
+
+var formatter1 = getFormatter("{value} km");
+
+// var formatter1 = function(value){
+//     return value + " km";
+// }
+var formatter2 = function(value){
+    return "$ "+value;
+}
+var range = [];
+for (i=0;i<25;i++){
+	str = i + "/01 00:00";
+	if (i<10) str = "0" + str;
+	str = "2015/"+str;
+	range.push(str);
+}
+// var range = ['01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01','01/01'];
+//var range = ['周一','周二','周三','周四','周五','周六','周日'];
+
+var data3 = [2210, 1810, 1110, 2640, 2100, 3100, 3900, 1810, 1110, 2640, 2100, 3100, 3900, 1810, 1110, 2640, 2100, 3100, 3900, 1810, 1110, 2640, 2100, 3100, 3900];
+
+
+
+for (key in data2){
+    var value = data2[key];
+    data2[key] *=-1;
+}
+for (key in data3){
+	var value = data3[key];
+    data3[key] *=-1;
+}
+
+var formatter = function(value){
+    var absValue = Math.abs(value);
+    if (value >0){
+        return formatter1(absValue);
+    }
+    if (value <0){
+        return formatter2(absValue);
+    }
+    return 0;
+}
+
+
+var option1 = {
+	legend: {
+		selectedMode:false,
+        data:['data1','data2']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            magicType : {show: true,title:['Line', 'Bar'], type: ['line', 'bar']},
+            restore : {show: true,title:"Restore"},
+            saveAsImage : {show: true,title:"Save as Image",type:'png',lang : ['click to save']}
+        }
+    },
+    tooltip:{
+        show:true,
+        showDelay:0,
+        trigger:"axis",
+        position:function(pos){
+        	return [pos[0],80]
+        },
+        formatter:function(params){
+            var html = "";
+            	
+            for (key in params){
+            	if (html != ""){
+            		html += "<br/>"
+            	}
+                var item = params[key];
+                if (!item.data) continue;
+                var series = this._option.series[0];
+                var str = item.seriesName + " : " + formatter(item.value);
+                html += str;
+            }
+            if (item){
+            	console.log(item);
+            	html = item.name+"<br/>"+html
+            }
+            
+            return html;
+        }
+    },
+    grid: {
+        x: 100,
+        y:80,
+        x2:10,
+        y2:0
+    },
+    xAxis : [
+        {
+            splitLine: {show:false},
+            type : 'category',
+            // boundaryGap : false,
+            data : range,
+            axisLabel:{
+            	show:true,
+            	margin:-15
+            }
+        }
+    ],
+    yAxis : [
+        {
+        	axisLine:{
+            	show:true
+            },
+            splitLine: {show:false},
+            type : 'value',
+            axisLabel:{
+            	show:true,
+                formatter:formatter
+            }
+        }
+    ],
+    series : [
+        {
+            name:'data1',
+            type:'line',
+            stack:'number',
+            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+            data:data1
+        },
+        {
+            name:'data2',
+            stack:'number',
+            type:'line',
+            data: []
+        }
+    ]
+}
+var option2 = {
+	legend: {
+		y:-30,
+		selectedMode:false,
+        data:['data1','data2']
+    },
+    toolbox: {
+    	y:-30,
+        show : true,
+        feature : {
+            magicType : {show: true, type: ['line', 'bar']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+	tooltip:{
+        show:true,
+        trigger:"axis",
+        showDelay:0,
+        position:function(pos){
+        	return [pos[0],0]
+        },
+        formatter:function(params){
+            var html = "";
+                var item = params[0];
+                var series = this._option.series[item.seriesIndex];
+                var str = item.seriesName + " : " + formatter(item.value);
+                html += str;
+            html = item.name+"<br/>"+html
+            return html;
+        }
+    },
+    grid: {
+        x: 100,
+        y:0,
+        x2:10,
+        y2:40
+    },
+    xAxis : [
+        {
+        	position:'top',
+            splitLine: {show:false},
+            type : 'category',
+            // boundaryGap : false,
+            data : range
+        }
+    ],
+    yAxis : [
+        {
+            splitLine: {show:false},
+            type : 'value',
+            axisLabel:{
+                formatter:formatter
+            }
+        }
+    ],
+    series : [
+        {
+            name:'data2',
+            type:'line',
+            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+            data: data2
+        }
+
+    ]
+}
+
+// chart1.setOption(option1,true);
+// chart2.setOption(option2,true);
+
+chart2.connect([chart1]);
+chart1.connect([chart2]);
+
+chart1.setOption(option1,true);
+chart2.setOption(option2,true);
+setTimeout(function(){
+	option2.series[0].data = data3;
+	chart2.setOption(option2,true);
+},2000)
+
+$(window).resize(function(){
+	chart1.resize();
+	chart2.resize();
+})
+
+
+
+
+// var option1 ={
+//     legend: {
+//         data:['data1','data2']
+//     },
+//     toolbox: {
+//         show : true,
+//         feature : {
+//             magicType : {show: true, type: ['line', 'bar']},
+//             restore : {show: true},
+//             saveAsImage : {show: true}
+//         }
+//     },
+//     grid: {
+//         x: 100,
+//         y:80,
+//         x2:10,
+//         y2:0
+//     },
+//     tooltip:{
+//         show:true,
+//         trigger:"axis",
+//         // formatter:function(params, ticket, callback){
+//         //     var html = "";
+//         //     for (key in params){
+//         //         if (html != ""){
+//         //             html+="<br/>";
+//         //         }
+//         //         var item = params[key];
+//         //         var series = option.series[item.seriesIndex];
+//         //         var str = item.seriesName + " : " + formatter(item.value);
+//         //         html += str;
+//         //     }
+//         //     html = item.name+"<br/>"+html
+//         //     console.log(params);
+//         //     callback(ticket,html);
+//         //     return html;
+//         // }
+//     },
+//     xAxis : [
+//         {
+//         	y:top,
+//             splitLine: {show:false},
+//             type : 'category',
+//             boundaryGap : false,
+//             data : range
+//         }
+//     ],
+//     yAxis : [
+//         {
+//             splitLine: {show:false},
+//             type : 'value',
+//             // axisLabel:{
+//             //     formatter:formatter
+//             // }
+//         }
+//     ],
+//     series : [
+//         {
+//             name:'data1',
+//             type:'line',
+//             // stack: 'number',
+//             itemStyle: {normal: {areaStyle: {type: 'default'}}},
+//             data:data1
+//         },
+        
+//     ]
+// };
+// var option2 ={
+// 	grid: {
+//         x: 100,
+//         y:80,
+//         x2:10,
+//         y2:0
+//     },
+//     grid: {
+//         x: 100,
+//         y:80,
+//         x2:10,
+//         y2:0
+//     },
+//     tooltip:{
+//         show:true,
+//         trigger:"axis",
+//         formatter:function(params, ticket, callback){
+//             var html = "";
+//             for (key in params){
+//                 if (html != ""){
+//                     html+="<br/>";
+//                 }
+//                 var item = params[key];
+//                 var series = option.series[item.seriesIndex];
+//                 var str = item.seriesName + " : " + formatter(item.value);
+//                 html += str;
+//             }
+//             html = item.name+"<br/>"+html
+//             console.log(params);
+//             callback(ticket,html);
+//             return html;
+//         }
+//     },
+//     xAxis : [
+//         {
+//         	y:top,
+//             splitLine: {show:false},
+//             type : 'category',
+//             boundaryGap : false,
+//             data : range
+//         }
+//     ],
+//     yAxis : [
+//         {
+//             splitLine: {show:false},
+//             type : 'value',
+//             axisLabel:{
+//                 formatter:formatter
+//             }
+//         }
+//     ],
+//     series : [
+//         {
+//             name:'data2',
+//             type:'line',
+//             stack: 'number',
+//             itemStyle: {normal: {areaStyle: {type: 'default'}}},
+//             data: data2
+//         },
+        
+//     ]
+
+// }
+
+
+// chart2.setOption(option2);
+
+
+
+	</script>
+</body>
+</html>

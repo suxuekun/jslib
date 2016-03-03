@@ -1,0 +1,67 @@
+<html>
+<head>
+	<script type="text/javascript" src = "js/sillypackage.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+(function(_global){
+	var package = "com.techstudio.suxuekun";
+	_self = sillypackage.createHierarchy(package)
+	if (!_self.prototype){
+		console.log('none proto')
+		_self.prototype = {};
+	}
+	var p = {
+		wtf:"wtf",
+		d:{
+			wtf:"wtf",
+			a:{
+				t:null,
+			}
+		},
+		func:function(){
+			console.log('ins');
+		}
+	}
+	var p2 = {
+		wtf2:"wtf",
+		d:{
+			wtf2:"wtf",
+			a2:{
+				t:null,
+			}
+		},
+		d2:{
+			wtf:"wtf",
+			a:{
+				t:null,
+			}
+		}
+	}
+	var f = {
+		func:function(){
+			console.log('wtffunck');
+		},
+		att1:"att1",
+
+	}
+	sillypackage.deepExtend(_self.prototype,p);
+	sillypackage.deepExtend(_self.prototype,p2);
+	sillypackage.deepExtend(_self,f);
+	for (var key in com.techstudio.suxuekun){
+		console.log(key,":",com.techstudio.suxuekun[key])
+	}
+	var S = com.techstudio.suxuekun;
+
+	var b = new S();
+	console.log("package",S);
+	console.log("class",b)
+	b.a = "a";
+
+	console.log(window);
+
+})(window);
+	
+	</script>
+</body>
+</html>

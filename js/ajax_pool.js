@@ -1,19 +1,19 @@
 
 (function(_global){
-	var AjaxPool = function(name){
+	var AjaxQueue = function(name){
 		this.name = name;
 		this.ajax_waiting_list = [];
 		this.ajax_current = null;
 	}
 	
-	AjaxPool.prototype.ajax_success = function(data){
+	AjaxQueue.prototype.ajax_success = function(data){
 		if (this.ajax_current.context){
 			this.ajax_current.success.apply(this.ajax_current.context,[data]);
 		}else{
 			this.ajax_current.success(data);
 		}
 	}
-	AjaxPool.prototype.ajax_complete = function(data){
+	AjaxQueue.prototype.ajax_complete = function(data){
 		if (this.ajax_current.context){
 			this.ajax_current.complete.apply(this.ajax_current.context,[data]);
 		}else{
@@ -25,7 +25,7 @@
 			this.ajax(next);
 		}
 	}
-	AjaxPool.prototype.ajax = function(ajaxObj){
+	AjaxQueue.prototype.ajax = function(ajaxObj){
 		if (this.ajax_current == null){
 			this.ajax_current = ajaxObj;
 			var new_ajax_obj = {};
@@ -40,22 +40,31 @@
 			this.ajax_waiting_list.push(ajaxObj);
 		}
 	}
-	AjaxPool.prototype.ajax_only_next = function (ajaxObj){
+	AjaxQueue.prototype.ajax_only_next = function (ajaxObj){
 		this.clear();
 		this.ajax(ajaxObj);
 	}
-	AjaxPool.prototype.clear = function(){
+	AjaxQueue.prototype.clear = function(){
 		this.ajax_waiting_list.length = 0;
+	}
+	AjaxQueue.prototype.getWaitingCount = function(){
+		return this.ajax_waiting_list.length;
+	}
+	AjaxQueue.prototype.isAjaxing = function(){
+		return this.ajax_current !=null;
+	}
+	AjaxQueue.prototype.isFree = function(){
+		return (this.getWaitingCount() == 0 && this.isAjaxing);
 	}
 	
 	var pools = {};
-	var AjaxPools = {};
-	AjaxPools.getPool = function(name){
+	var AjaxPool = {};
+	AjaxPool.getQ = function(name){
 		if (pools[name] == null){
-			pools[name] = new AjaxPool(name);
+			pools[name] = new AjaxQueue(name);
 		}
 		return pools[name];
 	}
-	_global["AjaxPools"] = AjaxPools;
+	_global["AjaxPool"] = AjaxPool;
 })(window)
 

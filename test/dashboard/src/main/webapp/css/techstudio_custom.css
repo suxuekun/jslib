@@ -1,0 +1,40 @@
+@CHARSET "UTF-8";
+
+.custom_file
+{
+
+}
+
+.custom_file .uploader
+{
+	width: 250px;
+}
+
+
+.custom_file .uploader .filename
+{
+	width: 137px;
+	z-index: 3;
+}
+
+
+input#media input#cover
+{
+	width: 250px;
+}
+
+.custom_file .uploader .action
+{
+	width:  90px;
+}
+
+
+.custom_file .uploader .help-inline
+{
+	width: 137px;
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	background-color: white;
+	z-index: 4;
+}

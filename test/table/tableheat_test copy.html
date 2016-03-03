@@ -1,0 +1,138 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.custom.js"></script>
+	<script type="text/javascript" src = "js/wilasCanvasLite.js"></script>
+	<script type="text/javascript" src = "js/heatmap.js"></script>
+	<style>
+		#myCanvas{
+			position:absolute;
+		}
+		#wrapper{
+			height:500px;
+		}
+	</style>
+	<script>
+	$(function(){
+		var c=document.getElementById("myCanvas");
+		var ctx=c.getContext("2d");
+
+		var txt="abc";
+		var gap = 2;
+		var textfix = 2;
+		var fix = 0.5;
+		var size = 14;
+		var number = 5;
+		var numberx = 30;
+		ctx.font= "" + size + "px Arial";
+
+
+
+		var length = ctx.measureText(txt).width;
+		console.log(length);
+		var $wrapper = $("#wrapper");
+
+
+		length += gap;
+		length = length >>0;
+		length2 = length + fix;
+		var ajustx = size*(numberx)  + length;
+		var ajust = size*(number) + length ;
+		console.log(ajust);
+
+		c.width = ajustx;
+		c.height = ajust;
+		ctx.font= "" + size + "px Arial";
+
+		$wrapper.width(c.width);
+		$wrapper.height(c.height);
+
+
+		var offset = {
+			x:length2,
+			y:length2,
+		}
+		console.log(length2);
+		ctx.moveTo(0,length2);
+		ctx.lineTo(ctx.canvas.clientWidth,length2);
+		ctx.moveTo(length2,0);
+		ctx.lineTo(length,ctx.canvas.clientHeight);
+		for (var i =0;i<number;i++){
+		  ctx.fillText(txt,0,i*size + length + size -textfix);
+		}
+		ctx.save()
+		ctx.rotate(Math.PI/2);
+		for (var i=0;i<numberx;i++){
+			ctx.save()
+		  ctx.fillText(txt,0,-i*size - length - textfix);
+		  ctx.restore()
+		}
+		ctx.stroke();
+		ctx.restore();
+
+		var drawaxis = function(ctx,offset,pos,lineW){
+				var px = (pos.x - offset.x);
+				var py = (pos.y - offset.y);
+				if (px<0) px = 0;
+				if (py<0) py =0;
+				var xi = (px/lineW)>>0;
+				var yi = (py/lineW)>>0;
+				var x = lineW/2 + xi*lineW;
+				var y = lineW/2 + yi*lineW;
+				x+=offset.x;
+				y+=offset.y;
+				ctx.save();
+				ctx.globalAlpha = 0.5
+				
+				ctx.beginPath();
+				ctx.lineWidth = lineW;
+				ctx.moveTo(0,y);
+				ctx.lineTo(ctx.canvas.clientWidth,y);
+				ctx.moveTo(x,0);
+				ctx.lineTo(x,ctx.canvas.clientHeight);
+				ctx.stroke();
+				ctx.restore();
+			}
+
+
+		var layerManager = new wilasCanvasLite.LayerManager();
+		var labels = layerManager.createLayer("label");
+		labels.setOption({
+			zIndex:40,
+			draw:function(layer){
+				if (!layer.custom || !layer.custom.pos) return;
+				var ctx = layer.getContext();
+				drawaxis(ctx,offset,layer.custom.pos,size)
+			},
+			on:function(e,pos){
+				if (!labels.visible) return;
+				switch(e.type){
+				case "mousemove":
+					labels.custom = labels.custom || {};
+					labels.custom.pos = pos;
+					labels.custom.e = e;
+					labels.update();
+					break;
+				}
+			}
+		})
+		labels.setParent($("#wrapper")[0]);
+		layerManager.anime.start();
+		// layerManager.anime.stop();
+
+
+	});
+
+	</script>
+</head>
+<body>
+	<div id ="wrapper">
+		<canvas id ="myCanvas">
+		</canvas>
+	</div>
+
+</body>
+</html>

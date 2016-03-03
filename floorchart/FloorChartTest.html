@@ -222,8 +222,11 @@ option = {
 				fontStyle:"oblique",
 				fontWeight:'lighter'
 			},
+			        selected: {
+            'heatmap' : false
+        },
 			// you can config your own icon
-			data:['heatmap',{name:'wifi',icon:"image://map/wifi.png"},"person","dog"],
+			data:[{name:'heatmap'},{name:'wifi',icon:"image://map/wifi.png"},"dog","person"],
 		},
 		// name of heatmap
 		chartLegend:'heatmap',
@@ -283,6 +286,33 @@ function click_handler(chart){
 }
 // when finish then set the option to the chart then the chart will show what you want
 floorChart.setOption(option);
+
+$("#map_bg_img").load(function(){
+	// console.log($("#map_bg_img").width(),$("#map_bg_img").height());
+	// console.log($(".parent").width(),$(".parent").height())
+	 w1 = $("#map_bg_img").width();
+	// w2 = $(".parent").width();
+	 h1 = $("#map_bg_img").height();
+	// h2 = $(".parent").height();
+
+	// console.log(w1,h1,w2,h2);
+	// scaleW = w2/w1;
+	// scaleH = h2/h1;
+	// console.log(scaleW,scaleH);
+	// scale = scaleW<scaleH?scaleW:scaleH;
+	// if (scale<0.1) scale = 0.1;
+	// xc = -(w1-w2*1.5);
+	// yc = -(h1-w2*1.5);
+	// console.log(scaleW,scaleH,scale);
+	// floorChart.panzoomRoot.find('.panzoom').panzoom("pan",xc*scale,yc*scale,{relative: true});
+	// floorChart.slide_to_scale(scale);
+	floorChart.setCenterMode(w1,h1);
+	floorChart.panzoomReset();
+	
+})
+$(window).resize(function(){
+	console.log($("#map_bg_img").width(),$("#map_bg_img").height());
+})
 
 
 /* floorChart2.setOption(option); */

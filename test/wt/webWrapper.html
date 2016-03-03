@@ -1,0 +1,17 @@
+<html>
+	<head>
+		<script src = "js/jquery.js"></script>
+		<script src = "js/require.js"></script>
+	</head>
+<body>
+
+	<div id = "a"></div>
+	<script>
+		var content = '<link rel="stylesheet" type="text/css" href="css/a.css"><script src = "js/a.js"><\/script><div id="b"></div>';
+		$(function(){
+			$test = $("#a");
+			$test.append(content);
+		});
+	</script>
+</body>
+</html>

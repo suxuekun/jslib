@@ -1,0 +1,145 @@
+<html>
+<head>
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/heatmap.js"></script>
+	<script type="text/javascript" src = "../js/echarts-all-dev.js"></script>
+	<script type="text/javascript" src = "../js/nouislider/jquery.nouislider.all.min.js"></script>
+	<script type="text/javascript" >
+		$(function(){
+			var htcontainer = document.getElementById('heatmaptest');
+			var heatmap = h337.create({
+				container: htcontainer,
+				maxOpacity: .5,
+				radius: 15,
+				blur: 0.5,
+			});
+			var data = [];
+			var t1 = new Date();
+
+			var f = 1;
+			var n = 100;
+			var m = 50000;
+			var p = m/n;
+
+			function pix(temp,f){
+				for (var key in temp){
+					var item = temp[key];
+					item.x= Math.floor(item.x/f)*f;
+					item.y= Math.floor(item.y/f)*f;
+				}
+			}
+
+			function setData(f,max){
+				var tempData = [];
+				for (var key in data){
+					var item = data[key];
+					tempData.push({x:item.x,y:item.y,value:item.value});
+				}
+				pix(tempData,f);
+
+				var start = new Date();
+				heatmap.setData({
+				  max: max,
+				  data: tempData
+
+				});
+				var end = new Date();
+				console.log(end.getTime() - start.getTime());
+			}
+
+			// for (var i=0;i<n;i++){
+			// 	var x0=Math.random()*500;
+			// 	var y0=Math.random()*400;
+			// 	var r0=Math.random()*100+100;
+
+			// 	for (var j=0;j<p;j++){
+			// 		var r = Math.random()*r0;
+			// 		var t = Math.random()*Math.PI*2;
+			// 		var x = Math.cos(t)*r + x0;
+			// 		var y = Math.sin(t)*r + y0;
+			// 		var v = 1;
+			// 		x = Math.floor(x/f)*f;
+			// 		y = Math.floor(y/f)*f;
+			// 		data.push({x:x,y:y,value:v});
+
+			// 	}
+			// }
+
+
+			for (var i=0;i<50000;i++){
+				var x = Math.random()*500;
+				var y = Math.random()*400;
+				var v = 1;
+				data.push({x:x,y:y,value:v});
+			}
+			pix(data,1);
+
+			setData(4,20);
+			
+			$('#b').click(function(){
+				var f = $("#f").val();
+				var max = $("#max").val();
+				setData(f,max);
+			})
+
+			var url = "heatmapDataNoModified.wilas";
+
+			var params = {
+				levelId:125,
+				buildingId:"",
+				zoneId:"",
+				period:"daily",
+				endDate:"27-11-2015",
+				startDate:"",
+				size:1,
+			};
+
+			$.ajax({
+    		type : 'POST',
+    		url : url,
+    		data :params,
+    		success : function(heatList) {
+    			console.log(heatList)
+    			data = heatList[0];
+    			console.log(data);
+    		},
+			statusCode: {
+				404: function() {
+					chart_heatmap_fillData(null);
+	    			echart_global.set_refreshing("echart_heatmap",false);
+				}
+			},
+    		
+    		complete:function(data) {
+    			//console.log(data);
+    		}
+    	});
+
+
+			
+		})
+	</script>
+	<style>
+		#heatmaptest{
+			width:800px;
+			height:400px;
+			border:red 1px solid;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		f:<input type="text" id="f" value =4></input></br>
+		max:<input type="text" id="max" value = 20></input></br>
+		<input type="button" id ="b" value = "refresh"></input>
+
+	</div>
+	<div id ="heatmaptest">
+
+	</div>
+	<div id ="echart">
+
+	</div>
+
+</body>
+</html>

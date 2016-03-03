@@ -1,0 +1,28 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script>
+		var key = "wtf";
+		var value = localStorage[key];
+		var storageSize = Math.round(JSON.stringify(localStorage).length / 1024);
+		console.log(storageSize);
+
+
+		document.write(value);
+		$(function(){
+					for (var i = 0; i < localStorage.length; i++){
+		    $('body').append(localStorage.getItem(localStorage.key(i)));
+		}
+		})
+
+		console.log(localStorage);
+
+	</script>
+</head>
+<body>
+</body>
+</html>

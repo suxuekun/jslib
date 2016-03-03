@@ -1,0 +1,81 @@
+<head>
+	<script src="wilasCanvasLite.js"></script>
+	<style>
+		#d{
+			-webkit-transform:scale(0.5,0.5) translate(100px,10px);
+			-ms-transform:scale(0.5,0.5) translate(100px,10px);
+			transform:scale(0.5,0.5) translate(100px,10px);
+		}
+		#e{
+			-webkit-transform:scale(0.5,0.5) translate(100px,10px);
+			-ms-transform:scale(0.5,0.5) translate(100px,10px);
+			transform:scale(0.5,0.5) translate(100px,10px);
+		}
+	</style>
+</head>
+<body>
+	<div style="position:relative;left:100px;top:50px;">
+		<div id = "d" style="position:absolute;left:100px;top:1000px;width:0px;height:0px;border:red 1px solid">
+		</div>
+	</div>
+</body>
+<script>
+	var layer = new wilasCanvasLite.Layer("a");
+	var COLORS = ['red','orange','green','blue'];
+	console.log(layer);
+	layer.setZIndex(3);
+	console.log(layer.changed);
+	var wrapper = document.getElementById("d")
+	//wrapper.appendChild(layer.getCanvas());
+	layer.setParent(wrapper);
+	layer.setOption({background:"black",backgroundAlpha:0.1})
+
+
+
+	var anime = new wilasCanvasLite.Animation();
+
+	anime.start();
+	anime.register(layer);
+
+
+
+	for (var i = 0;i<100;i++){
+		var circle = new wilasCanvasLite.shapes.Circle();
+		circle.setXYR(Math.floor(Math.random()*700+150),Math.floor(Math.random()*400+100),10);
+		
+
+
+		var ci = Math.floor(Math.random()*4);
+		var effect = new wilasCanvasLite.effects.CircleBounce();
+		circle.setOption({
+			click:function(e,pos){
+				console.log(this.id);
+			},
+			mousemove:function(e,pos){
+				
+			},
+			color:COLORS[ci],
+			effects:[effect],
+		});
+		layer.addChild(circle);
+		console.log(circle.id);
+
+
+	}
+	
+	var layer2 = new wilasCanvasLite.Layer("a2");
+	anime.register(layer2);
+	layer2.setZIndex(2);
+	layer2.getContext();
+	layer2.setParent(wrapper);
+	layer2.setOption({background:"yellow",backgroundAlpha:0.2})
+
+
+	layer._resize(1000,600);
+	layer2._resize(1000,600);
+
+	
+
+
+	
+</script>

@@ -1,0 +1,68 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+	<script src = "js/jquery.js"></script>
+	<script src = "js/echarts-all-dev.js"></script>
+	<script src = "js/compareChartInOne.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/compareChart.css">
+</head>
+<body>
+	<div id="chart" class="chart_normal"></div>
+
+	<script>
+		cChart = CompareChartInOnePlugin.init("chart");
+
+		var label = [];
+		for (i=0;i<25;i++){
+			str = i + "/01 00:00";
+			if (i<10) str = "0" + str;
+			str = "2015/"+str;
+			label.push(str);
+		}
+		var title = {text:'Title'}
+
+		var series = [
+			{
+				name:"data1",
+				type:"line",
+				data:[120, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210],
+				yAxisIndex:0
+			},{
+				name:"data2",
+				type:"line",
+				data:[22000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000],
+				yAxisIndex:1
+			},{
+				name:"data3",
+				type:"bar",
+				data:[22000, 18200, 1910, 2340, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 1910, 2340, 29000, 33000, 31000],
+				yAxisIndex:1
+			}
+		]
+		var formatters = ["{value} kg","$ {value}"];
+		var formatters2 = ["{value} kg", function(value){return "a" + value + "%"}]
+
+		CompareChartInOnePlugin.update("chart","TitleName",label,series,formatters);
+
+			/**
+			option has following attributes to set
+
+			label:[],
+			series[{name:"",yAxisIndex:0,data:[1,2,3]}],
+			formatters:[func / string ,[ func / string]],
+
+			// other echart settings
+			
+			legend: {} // legend data will auto create if legend.data is null;
+			toolbox :
+			title:{}//echart title
+			tooltip : will use formatter for values
+			xAxis: create from label if xAxis.data is null
+			yAxis: create from series if yAxis is null
+			*/
+			// cChart.setOption(option);
+
+	</script>
+
+</body>
+</html>

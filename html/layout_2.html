@@ -1,0 +1,112 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.css">
+	<script type="text/javascript" src = "../js/jquery.js"></script>
+	<script type="text/javascript" src = "../js/moment.js"></script>
+	<script type="text/javascript" src = "../js/utilFunc.js"></script>
+	<script type="text/javascript">
+	</script>
+	<style>
+		.border{
+			border:1px solid black;
+		}
+		.border.red{
+			border:1px solid red;
+		}
+		.w{
+			position:relative;
+			width:100%;
+			height:100%;
+		}
+		.t{
+			background:green;
+		}
+		.l,.r{
+			margin:0;
+			position:relative;
+			height:100%;
+			overflow:hidden;
+		}
+		.lw{
+			left:0;
+			right:0;
+			width:100%;
+		}
+		.r{
+			border-left:1px solid black;
+		}
+		.abs{
+			position:absolute;
+		}
+		.dyn{
+			overflow:auto;
+			height:auto;
+			background:red;
+		}
+		.l .t{
+			top:0px;
+			height:30px;
+		}
+		.l .m{
+			top:30px;
+			height:120px;
+		}
+		.l .b{
+			top:150px;
+		
+			bottom:0px;
+		}
+		.r .t{
+			top:0px;
+			height:30px;
+		}
+		.r .m1{
+			top:30px;
+			height:150px;
+		}
+		.r .m2{
+			top:180px;
+			bottom:300px;
+
+		}
+		.r .b{
+			background:gray;
+			height:300px;
+			bottom:-280px;
+		}
+		.r .b.open{
+			bottom:0px;
+		}
+		#content{
+			margin:50px auto;
+			width:80%;
+			height:80%;
+
+		}
+	</style>
+</head>
+<body>
+	<div id="content">
+		<div class = "w">
+			<div class = " col-xs-10 l">
+				<div class = " lw abs t">
+				</div>
+				<div class = " lw abs m1">
+				</div>
+				<div class = " lw abs b dyn">
+				</div>
+			</div>
+			<div class = " col-xs-2 r">
+				<div class = " lw abs t">
+				</div>
+				<div class = " lw abs m1">
+				</div>
+				<div class = " lw abs m2 dyn">
+				</div>
+				<div class = " lw abs b">
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

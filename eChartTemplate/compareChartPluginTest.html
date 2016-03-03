@@ -1,0 +1,36 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+	<script src = "js/jquery.js"></script>
+	<script src = "js/echarts-all-dev.js"></script>
+	<script src = "js/compareChart.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/compareChart.css">
+
+</head>
+<body>
+	<div id ="compare_chart"></div>
+	<script>
+		cChart = CompareChartPlugin.init("compare_chart");
+
+		var label = [];
+		for (i=0;i<25;i++){
+			str = i + "/01 00:00";
+			if (i<10) str = "0" + str;
+			str = "2015/"+str;
+			label.push(str);
+		}
+
+		var option = {
+			name1:"data1",
+			name2:"data2",
+			label:label,
+			data1:[120, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210, 132, 101, 134, 90, 230, 210],
+			data2:[22000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000, 18200, 19100, 23400, 29000, 33000, 31000],
+			valueFormat1:"{value} kg",
+			valueFormat2:"$ {value}",
+
+		}
+		cChart.setOption(option);
+	</script>
+</body>
+</html>

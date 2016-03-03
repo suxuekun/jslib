@@ -1,0 +1,46 @@
+<head>
+	<meta charset="utf-8"/>
+    <script type="text/javascript" src="js/jquery.js"></script>
+</head>
+
+
+
+
+</script>
+<body>
+<select id ="s1">
+</select>
+
+<script>
+
+
+var data = [
+            {
+            	_id:"id1",
+            name:"abc",
+            type:"type1"
+            },
+            {
+        		_id:"id2",
+		    		
+		    name:"def",
+		    type:"type1"
+		    }
+            ];
+
+
+var index = {}
+for (var key in data){
+	var item = data[key];
+	var id = item["_id"];
+	index[id] = item;
+}
+
+var selectDom = $("#s1");
+selectDom.empty();
+for (var key in index){
+	item = index[key];
+	selectDom.append("<option value='"+key+"'>"+item.name+"</option>");
+}
+</script>
+</body>

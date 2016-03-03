@@ -1,0 +1,61 @@
+<script>
+
+//1
+var a1 = 1;
+
+// b1 is under f1 scope
+function f1(){
+	var b1 = 1;
+}
+//f1();
+// console.log(b1)// b1 not defined
+
+//2
+
+var b1 = 0;
+
+var f2A= function(){
+	console.log('f2A say: b1 is ',b1);//can find b1 here;
+}
+
+function f2(){
+	var b1 = 1;
+	var f22=function(){
+		console.log('f22 say: b1 is ',b1);//can find b1 here;
+	}
+	f22();
+	setTimeout(function(){
+		console.log(this);
+		console.log('f2.settimeout(anonymous()) say: b1 is ',b1);//can find b1 here;
+	},1000)
+	setTimeout(f2A,1000);
+}
+f2();
+console.log('global say b1 is :',b1);
+
+
+
+function printArray(arr) {
+  for (var key in arr) {
+    console.log(arr[key]);
+
+  }
+}
+
+printArray([0,1,2,3]);  // This works.
+ console.log("------")
+var a = new Array(10);
+printArray(a);  // This is wrong.
+
+a = document.getElementsByTagName('*');
+printArray(a);  // This is wrong.
+ console.log("------")
+a = [0,1,2,3];
+a.buhu = 'wine';
+printArray(a);  // This is wrong again.
+ console.log("------")
+a = new Array;
+a[3] = 3;
+printArray(a);  // This is wrong again.
+ console.log("------")
+</script>

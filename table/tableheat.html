@@ -1,0 +1,105 @@
+<html>
+<head>
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.custom.js"></script>
+	<script type="text/javascript" src = "js/wilasCanvasLite.js"></script>
+	<script type="text/javascript" src = "js/heatmap.js"></script>
+	
+	<style>
+		#wrapper{
+			width:100%;
+			height:600px;
+			overflow: scroll;
+		}
+		#heatmap{
+			width:100%;
+			height:100%;
+
+		}
+	</style>
+	<script>
+(function(_global){
+	var deepExtend = function(target, source) {
+		for ( var key in source) {
+			var s = source[key];
+			var t = target[key];
+			if (s && typeof (s) == 'object') {// object or array
+				if (!t) {
+					t = s.constructor();
+				}
+				deepExtend(t, s);
+			} else {
+				t = source[key];// function or normal attr
+			}
+			target[key] = t;
+		}
+	}
+	var DefaultOption = {
+		cellSize:15,
+		padding:10,
+		textFix:2,
+		fontFamily:"Times New Roman",
+	}
+	var heatmapOption = {
+		container:$heatmapWrapper,
+		radius: 15,
+		blur: 0.66,
+		maxOpacity:0.6,
+		minOpacity:0.1,
+	}
+
+	var TableHeatmap = function(option){
+		this.setOption(option);
+	}
+	TableHeatmap.prototype = {
+		setOption:function (option){
+			if (this.option == null){
+				this.option = {};
+				deepExtend(this.option,DefaultOption);
+			}
+			if (option == null) return;
+		}
+
+	}
+
+	TableHeat = {
+
+	}
+	_global.TableHeat = TableHeat;
+})(window)
+
+$(function(){
+	var $heatmap = $("#heatmap");
+	var $heatmapWrapper = $heatmap[0];
+	
+	var heatmapInstance = null;
+	var createheatmapIns = function(){
+		var heatcanvas = $heatmap.find(".heatmap-canvas");
+		if (heatcanvas.length>0){
+			heatcanvas.remove();
+		}
+		heatmapInstance = h337.create(heatmapOption);
+		var heatcanvas = $heatmap.find(".heatmap-canvas");
+		if (heatcanvas.length >0){
+			heatcanvas[0].style.zIndex = 20;
+		}
+	}
+	createheatmapIns();
+
+	var data = [];
+
+});
+	</script>
+
+	
+</head>
+<body>
+	<div id ="wrapper">
+		<div id ="heatmap">
+		</div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+<script>
+	var str = "a&b ";
+	var str2 = encodeURIComponent(str);
+	
+	var str3 = "http://abc.def.com/?a="+str2;
+	console.log(str,str2,str3);
+	//window.location.href = str3;
+	console.log(str3.sizeOf());
+</script>

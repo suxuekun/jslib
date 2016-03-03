@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>test</title>
+<script type="text/javascript" src = "js/jquery.js"></script>
+<style type="text/css">
+
+
+</style>
+</head>
+<body>
+	<button id = "full">full</button>
+	<button id = "back">half</button>
+	<div id="test"></div>
+	<script>
+		var list = [];
+		function c1(){
+			callback("c1");
+		}
+		function c2(){
+			callback("c2");
+		}
+		function callback(text){
+			console.log(text);
+		}
+		function nextCall(){
+			for (var key in list){
+				func = list[key];
+				func();
+			}
+			console.log(list.length);
+			list.length = 0;
+		}
+		function callLater(callback){
+			if (list.indexOf(callback) <0){
+				list.push(callback);
+				if (list.length ==1){
+					requestAnimationFrame(nextCall);
+				}
+			}
+		}
+		$(function(){
+			callLater(c1);
+			callLater(c1);
+			callLater(c2);
+			setTimeout(cc,200);
+		})
+		function cc(){
+		}
+
+	</script>
+</body>
+</html>

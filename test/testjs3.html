@@ -1,0 +1,65 @@
+<html>
+<head>
+
+	<style>
+	</style>
+	<script>
+
+	function deepExtend(target, source) {
+		for ( var key in source) {
+			var s = source[key];
+			var t = target[key];
+			if (s && typeof (s) == 'object') {// object or array
+				if (!t) {
+					t = s.constructor();
+				}
+				deepExtend(t, s);
+			} else {
+				t = source[key];// function or normal attr
+			}
+			target[key] = t;
+		}
+	}
+
+	function extendSuper(target,super){
+		if (!target.prototype) target.prototype={};
+		deepExtend(target.prototype,super.prototype);
+	}
+
+	function createConstructor(constructor,supers){
+
+		if (typeof super == 'function'){
+
+		}
+	}
+
+	function Clazz(option){
+		var className = option.className;
+		var constructor = option.constructor;
+		var proto = option.proto;
+		var super = option.super;
+		// if (constructor == null) constructor = function(){};
+		// constructor.name = className;
+
+
+		if (super){
+			if (typeof super == 'function'){
+
+				extendSuper(clazz,super);
+			}else{
+				for(var key in super){
+					var f = super[key];
+					extendSuper(clazz,f);
+				}
+			}
+		}
+
+	}
+
+
+
+	</script>
+</head>
+<body>
+</body>
+</html

@@ -1,0 +1,350 @@
+<html>
+<head>
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+	<script type="text/javascript" src = "js/jquery.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src = "js/jquery-ui.custom.js"></script>
+	<script type="text/javascript" src = "js/heatmap.js"></script>
+	
+	<style>
+		body{
+			background:white !important;
+		}
+		#slider-range{
+			width:500px;
+		}
+		.abs{
+			position:absolute;
+		}
+		#heatmaptest{
+			width:200%;
+			height:200%;
+			left:0;
+			top:0;
+			transform-origin:0% 0%;
+			transform:scale(0.5,0.5);
+		}
+		
+		.rel{
+			position:relative;
+		}
+		#heatmapwrapper{
+			width:1000px;
+			height:600px;
+			border:red 1px solid;
+			position:relative;
+			left:100px;
+			cursor:none;
+		}
+
+	</style>
+	<script type="text/javascript" >
+		$(function(){
+			var lineW = 4;
+			var img = new Image();
+			var image_ready = false;
+			var onImage = false;
+			img.addEventListener("load", function() {
+				image_ready = true;
+			}, false);
+			img.src = "img/buildingIcon.png";
+			
+			var drawPos = null;
+			var $wrapper = $("#heatmapwrapper");
+			var htcontainer = document.getElementById('heatmaptest');
+			var heatmap = h337.create({
+				container: htcontainer,
+				maxOpacity: 1,
+				radius: 15,
+				blur: 0.66,
+			});
+			var data = [];
+			var t1 = new Date();
+
+			var f = 1;
+			var n = 100;
+			var m = 50000;
+			var p = m/n;
+			var f2 = Math.floor(f/2);
+
+			function pix(temp,f){
+				lineW = f;
+				for (var key in temp){
+					var item = temp[key];
+					item.x= Math.floor(item.x/f)*f + f2;
+					item.y= Math.floor(item.y/f)*f + f2;
+				}
+			}
+
+			function setData(f,max){
+				var tempData = [];
+				for (var key in data){
+					var item = data[key];
+					tempData.push({x:item.x,y:item.y,value:item.value});
+				}
+				pix(tempData,f);
+
+				var start = new Date();
+				heatmap.setData({
+				  max: max,
+				  data: tempData
+				});
+				var end = new Date();
+			}
+
+			for (var i=0;i<100000;i++){
+				var x = Math.random()*4000;
+				var y = Math.random()*4000;
+				var v = Math.random()*50;
+				data.push({x:x,y:y,value:v});
+			}
+			pix(data,1);
+
+			setData(25,200);
+			
+
+
+			var url = "heatmapDataNoModified.wilas";
+
+			var params = {
+				levelId:125,
+				buildingId:"",
+				zoneId:"",
+				period:"daily",
+				endDate:"14-11-2015",
+				startDate:"14-11-2015",
+				size:1,
+			};
+			var start = new Date();
+
+/* 			$.ajax({
+	    		type : 'POST',
+	    		url : url,
+	    		data :params,
+	    		success : function(heatList) {
+	    			//data = heatList["2015-11-14 15:30:00"];
+	    			var end = new Date();
+	    			console.log(heatList);
+	    			console.log(start,end,end.getTime()-start.getTime());
+	    			data = heatList["2015-11-14"];
+	    		},
+				statusCode: {
+					404: function() {
+						chart_heatmap_fillData(null);
+		    			echart_global.set_refreshing("echart_heatmap",false);
+					}
+				},
+	    		
+	    		complete:function(data) {
+
+	    		}
+	    	}); */
+			var changed_max = 250;
+			var $max = $("#max");
+			$max.html(changed_max);
+			var timeout = null;
+			var slider = $( "#slider-range" ).slider({
+				orientation:"horizontal",
+				range: "min",
+				min: 1,
+				max: 500,
+				value: 250,
+				slide: function( event, ui ) {
+					draw(ui.value);
+				}
+			});
+			var draw = function(max){
+				changed_max = max;
+				if (timeout){
+					clearTimeout(timeout);
+				}
+				timeout = setTimeout(function(){
+					change();
+				}, 200)
+			}
+
+			$('#b').click(function(){
+				change();
+			})
+			var change = function(){
+				var f = $("#f").val();
+				var max = changed_max;
+				$max.html(changed_max);
+				setData(f,max);
+			}
+			$container = $(htcontainer)
+			$heatmapcanvas = $container.find(".heatmap-canvas");
+			console.log($heatmapcanvas);
+			$heatmapcanvas.mousemove(function(){
+				console.log('move on  heat');
+			})
+
+			canvas = document.getElementById("heataxis");
+			$(canvas).mousemove(function(){
+				console.log('move on axis');
+			})
+			
+			$heatmapcanvas[0].style.zIndex = 1;
+			canvas.style.zIndex = 0;
+		
+			$container.append(canvas);
+
+			canvas.width = $heatmapcanvas.width();
+			canvas.height = $heatmapcanvas.height();
+			var ctx = canvas.getContext('2d');
+			var clear = function(){
+				ctx.save();
+				ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+				ctx.globalAlpha=0.2; // Half opacity
+				ctx.fillStyle = "rgba(255, 255, 255)";
+				ctx.fillRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+				ctx.restore();
+			}
+			
+			var drawaxis = function(pos){
+				var x = Math.round(pos.x/lineW)*lineW;
+				var y = Math.round(pos.y/lineW)*lineW;
+				clear();
+				ctx.globalAlpha = 0.5
+				ctx.save();
+				ctx.beginPath();
+				ctx.lineWidth = lineW;
+				ctx.moveTo(0,y);
+				ctx.lineTo(ctx.canvas.clientWidth,y);
+				ctx.moveTo(x,0);
+				ctx.lineTo(x,ctx.canvas.clientHeight);
+				ctx.stroke();
+				ctx.restore();
+			}
+			var drawImage = function(){
+				ctx.save();
+				ctx.drawImage(img,100,100,32,32);
+				ctx.stroke();
+				ctx.restore();
+			}
+			var imgSize = 0;
+			var motion = 1;
+			
+			var drawImage = function(){
+				ctx.save();
+				ctx.beginPath();
+				ctx.arc(100, 100, 16, 0, 2 * Math.PI, false);
+				ctx.fillStyle = 'red';
+				ctx.fill();
+				/* ctx.drawImage(img,100,100,32,32);
+				ctx.stroke(); */
+				ctx.restore();
+			}
+			
+			var drawJumpingImage = function(){
+				clear();
+				imgSize +=motion;
+				if (imgSize >10 || imgSize < 0){
+					motion = -motion;
+				}
+
+				ctx.save();
+				
+				ctx.beginPath();
+				ctx.arc(100, 100, 16+imgSize, 0, 2 * Math.PI, false);
+				ctx.fillStyle = 'red';
+				ctx.fill();
+				//ctx.drawImage(img,100+imgSize/2,100+imgSize,64-imgSize,64-imgSize);
+				//ctx.stroke();
+				ctx.restore();
+			}
+			var drawImg = function(){
+				if (image_ready){
+					if (!onImage){
+						drawImage();
+					}else{
+						drawJumpingImage();
+					}
+					
+				}
+			}
+			
+			var highlight = function(){
+				
+				onImage = true;
+			}
+			var delight = function(){
+				onImage = false;
+				
+			}
+			
+			$wrapper.mousemove(function(e){
+				console.log("move on wrapper");
+				var tx = e.pageX;
+				var ty = e.pageY;
+				var offset = $(this).offset();
+				var x = tx-offset.left;
+				var y = ty-offset.top;
+				var transform = $container.css('transform');
+				if (transform && transform!= "none"){
+					var matrix = transform.match(/-?[\d\.]+/g);
+					var a = matrix[0];
+					var d = matrix[3];
+					x = Math.floor(x/a);
+					y = Math.floor(y/d);
+				}
+
+				
+				var pos={x:x,y:y};
+
+				if (pos.x>=100 && pos.y>=100 && pos.x<132 && pos.y<132){
+					highlight();
+				}else{
+					delight();
+				}
+
+				pos.value = heatmap.getValueAt(pos);
+				
+				drawPos = pos;
+
+				return pos;
+			})
+			function drawPointer(){
+				if (drawPos != null){
+					drawaxis(drawPos);
+				}
+				drawPos= null;
+			}
+			
+			function render(){
+				
+				drawPointer()
+				//drawImg();
+			}
+			
+			function loop(){
+				requestAnimationFrame(loop);
+				render();
+			}
+			loop();
+
+			
+		})
+	</script>
+
+	
+</head>
+<body>
+	<div>
+		<br/>
+		f:<input type="text" id="f" value =25></input><br/>
+		max:<div id="max"></div><div id="slider-range"></div>
+		<!--  <input type="text" id="max" value = 20></input><br/>-->
+		<input type="button" id ="b" value = "refresh"></input>
+
+	</div>
+	
+	<div id ="heatmapwrapper">
+		
+		<div id ="heatmaptest" class ='rel'>
+			<canvas id = "heataxis" class ='abs'></canvas>
+		</div>
+	</div>
+
+</body>
+</html>
