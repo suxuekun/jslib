@@ -1,0 +1,20 @@
+<html>
+<head>
+	<script type="text/javascript" src = "js/jquery.js"></script>
+
+</head>
+<body>
+	<script>
+		$.ajax({
+			url:'http://wilas.techstudio.mobi:8813/LastSeen',
+			data:{
+				mac:'B4:B6:76:32:6D:24',
+				threshold:300000,
+				tenantId:'tangs'
+			}
+		}).done(function(data){
+			console.log(data);
+		});
+	</script>
+</body>
+</html>

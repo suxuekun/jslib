@@ -1,0 +1,56 @@
+<html>
+<head>
+	<script type="text/javascript" src = "../js/sutil.js"></script>
+</head>
+<body>
+	<script>
+//testing
+
+	var ns = sutil.getNamespace("org.example");
+	sutil.Interface.override("warning",true);
+	var iface = new sutil.Interface({
+		name:"iface",
+		methods:['getFace'],
+		warning:true,
+	})
+	var iPerson = new sutil.Interface({
+		name:"iPerson",
+		methods:['getName'],
+	})
+	console.dir(sutil.Interface);
+	console.log(iface);
+
+	var Face = ns.Face = sutil.defineClass({
+		className:"Face",
+		initialize:function(name){
+			this.name = name;
+			console.log('init Face',name);
+		},
+		interfaces:[iface],
+		methods:{
+			getFace:function(){
+				return "this is "+ this.name +"'s face"; 
+			}
+		}
+	})
+	console.dir(Face);
+	var su_face = new Face("su");
+	console.log(su_face.getFace());
+	
+
+	console.log('ns is org.example and org.example.Face is :');
+	console.dir(org.example.Face);
+
+	var shang_face = new org.example.Face("shang");
+	console.log(shang_face.getFace());
+
+
+	Face.impl(iPerson,{
+		getName:function(){
+			return this.name;
+		}
+	})
+	</script>
+
+</body>
+</html>
